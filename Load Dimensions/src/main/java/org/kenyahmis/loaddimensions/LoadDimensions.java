@@ -10,15 +10,14 @@ public class LoadDimensions {
 
     public static void main(String[] args) {
 
+
         SparkConf conf = new SparkConf();
-        conf.setAppName("Load facilities");
+        conf.setAppName("Load Dimensions");
         SparkSession session = SparkSession.builder()
-                .master("local")
                 .config(conf)
                 .getOrCreate();
 
         // load dimensions
-        new LoadDateDimension().loadDates(session);
         new LoadFacilitiesDimension().loadFacilities(session);
         new LoadPatientDimension().loadPatients(session);
         new LoadPartnerDimension().loadPartners(session);

@@ -46,7 +46,7 @@ public class LoadFacilitiesDimension {
         latestUploadDataframe.createOrReplaceTempView("latest_upload");
 
         Dataset<Row> dimFacilityDf = session.sql("select \n" +
-                "source_facility.*,\n" +
+                "source_facility.MFLCode as FacilityKey,source_facility.*,\n" +
                 "cast(date_format(site_abstraction.DateSiteAbstraction,'yyyyMMdd') as int) as DateSiteAbstractionKey,\n" +
                 "cast(date_format(latest_upload.LatestDateUploaded, 'yyyyMMdd') as int) as LatestDateUploadedKey,\n" +
                 "current_date() as LoadDate \n" +

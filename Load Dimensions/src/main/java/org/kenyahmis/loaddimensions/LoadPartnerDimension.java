@@ -18,7 +18,7 @@ public class LoadPartnerDimension {
                 .option("query", sourcePartnersQuery)
                 .load();
         sourcePartnersDataframe.createOrReplaceTempView("source_partner");
-        Dataset<Row> dimPartnerDf = session.sql("SELECT upper(PartnerName),current_date() AS LoadDate FROM source_partner");
+        Dataset<Row> dimPartnerDf = session.sql("SELECT upper(PartnerName) AS PartnerName, current_date() AS LoadDate FROM source_partner");
 
         dimPartnerDf.printSchema();
         dimPartnerDf.show();

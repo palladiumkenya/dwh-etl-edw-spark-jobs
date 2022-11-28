@@ -6,11 +6,10 @@ public class LoadPatientDimension {
 
     public void loadPatients(SparkSession session) {
         RuntimeConfig rtConfig = session.conf();
-        String sourcePatients = "SELECT DISTINCT patients.PatientID,patients.PatientPK,patients.SiteCode,Gender,DOB,MaritalStatus,Nupi,PatientType,PatientSource,eWHO,eWHODate,bWHO,bWHODate\n" +
+        String sourcePatients = "SELECT DISTINCT patients.PatientID,patients.PatientPK,patients.SiteCode,Gender,DOB,MaritalStatus,NUPI,PatientType,PatientSource,eWHO,eWHODate,bWHO,bWHODate\n" +
                 " FROM [dbo].[CT_Patient] patients\n" +
                 " left join dbo.CT_PatientsWABWHOCD4 as wabwhocd4 on patients.PatientPK = wabwhocd4.PatientPK\n" +
                 " WHERE patients.SiteCode >0";
-
         Dataset<Row> sourcePatientsDataframe = session.read()
                 .format("jdbc")
                 .option("url", rtConfig.get("spark.ods.url"))
@@ -20,7 +19,7 @@ public class LoadPatientDimension {
                 .option("query", sourcePatients)
                 .load();
         sourcePatientsDataframe.createOrReplaceTempView("source_patient");
-        Dataset<Row> dimPatient = session.sql("SELECT PatientID,PatientPK,SiteCode,Gender,DOB,MaritalStatus,Nupi," +
+        Dataset<Row> dimPatient = session.sql("SELECT PatientPK as PatientKey, PatientID,PatientPK,SiteCode,Gender,DOB,MaritalStatus,NUPI," +
                 "PatientType,PatientSource,eWHO,eWHODate,bWHO,bWHODate FROM source_patient");
         dimPatient.printSchema();
         dimPatient.show();
@@ -34,7 +33,5 @@ public class LoadPatientDimension {
                 .option("truncate", "true")
                 .mode(SaveMode.Overwrite)
                 .save();
-
-
     }
 }

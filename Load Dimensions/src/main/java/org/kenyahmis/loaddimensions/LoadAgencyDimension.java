@@ -6,8 +6,7 @@ public class LoadAgencyDimension {
     public void loadAgencies(SparkSession session){
         RuntimeConfig rtConfig = session.conf();
         final String sourceAgenciesQuery = "SELECT DISTINCT [SDP Agency] as Agency \n" +
-                "FROM [ODS].[dbo].[ALL_EMRSites] WHERE [SDP Agency] <>'NULL' AND [SDP Agency] IS NOT NULL  AND [SDP Agency]<>''" +
-                " FROM dbo.ALL_EMRSites";
+                "FROM dbo.ALL_EMRSites WHERE [SDP Agency] <>'NULL' AND [SDP Agency] IS NOT NULL AND [SDP Agency]<>''";
         Dataset<Row> sourceAgencyDataframe = session.read()
                 .format("jdbc")
                 .option("url", rtConfig.get("spark.ods.url"))
@@ -17,7 +16,7 @@ public class LoadAgencyDimension {
                 .option("query", sourceAgenciesQuery)
                 .load();
         sourceAgencyDataframe.createOrReplaceTempView("source_agency");
-        Dataset<Row> dimAgencyDf = session.sql("SELECT upper(AgencyName) FROM source_agency");
+        Dataset<Row> dimAgencyDf = session.sql("SELECT upper(Agency) AS AgencyName FROM source_agency");
 
         dimAgencyDf.printSchema();
         dimAgencyDf.show();
