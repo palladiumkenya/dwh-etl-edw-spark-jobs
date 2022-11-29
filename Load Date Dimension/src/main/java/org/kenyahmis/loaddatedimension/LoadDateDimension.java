@@ -12,9 +12,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import static org.apache.spark.sql.functions.*;
 
 public class LoadDateDimension {
     private static final Logger logger = LoggerFactory.getLogger(LoadDateDimension.class);
@@ -31,7 +28,6 @@ public class LoadDateDimension {
         RuntimeConfig rtConfig = session.conf();
         Dataset<Row> datesDataframe = session.sql("select explode(sequence(to_date('" + sDate + "'), to_date('" + eDate + "'),interval 1 day)) as Date");
         datesDataframe.createOrReplaceTempView("dates");
-        long datesCount = datesDataframe.count();
         final String queryFileName = "LoadDateDimension.sql";
         String query;
         InputStream inputStream = LoadDateDimension.class.getClassLoader().getResourceAsStream(queryFileName);
