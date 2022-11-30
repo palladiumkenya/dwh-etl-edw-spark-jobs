@@ -89,10 +89,10 @@ public class LoadARTHistoryFact {
 
         Dataset<Row> dimHistoricalARTOutcomeBaseDataFrame = session.read()
                 .format("jdbc")
-                .option("url", rtConfig.get("spark.edw.url"))
-                .option("driver", rtConfig.get("spark.edw.driver"))
-                .option("user", rtConfig.get("spark.edw.user"))
-                .option("password", rtConfig.get("spark.edw.password"))
+                .option("url", rtConfig.get("spark.ods.url"))
+                .option("driver", rtConfig.get("spark.ods.driver"))
+                .option("user", rtConfig.get("spark.ods.user"))
+                .option("password", rtConfig.get("spark.ods.password"))
                 .option("dbtable", rtConfig.get("spark.historicalArtOutcomeBase.dbtable"))
                 .load();
         dimHistoricalARTOutcomeBaseDataFrame.persist(StorageLevel.DISK_ONLY());
