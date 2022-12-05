@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.kenyahmis</groupId>
-    <artifactId>load-age-group-dimension</artifactId>
+    <artifactId>load-differentiated-care-dim</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
@@ -48,7 +48,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>org.kenyahmis.loadagegroupdim.LoadAgeGroupDimension</mainClass>
+                            <mainClass>org.kenyahmis.loaddifferentiatedcaredim.LoadDifferentiatedCareDim</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
