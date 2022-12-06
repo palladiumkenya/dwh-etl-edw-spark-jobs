@@ -47,7 +47,7 @@ public class LoadAgeGroupDimension {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimAgeGroups.dbtable"))
+                .option("dbtable", rtConfig.get("spark.dimAgeGroup.dbtable"))
                 .option("truncate", "true")
                 .mode(SaveMode.Overwrite)
                 .save();

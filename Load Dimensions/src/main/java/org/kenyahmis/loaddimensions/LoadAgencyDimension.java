@@ -16,7 +16,7 @@ public class LoadAgencyDimension {
                 .option("query", sourceAgenciesQuery)
                 .load();
         sourceAgencyDataframe.createOrReplaceTempView("source_agency");
-        Dataset<Row> dimAgencyDf = session.sql("SELECT upper(Agency) AS AgencyName FROM source_agency");
+        Dataset<Row> dimAgencyDf = session.sql("SELECT upper(Agency) AS AgencyName,current_date() as LoadDate FROM source_agency");
 
         dimAgencyDf.printSchema();
         dimAgencyDf.show();

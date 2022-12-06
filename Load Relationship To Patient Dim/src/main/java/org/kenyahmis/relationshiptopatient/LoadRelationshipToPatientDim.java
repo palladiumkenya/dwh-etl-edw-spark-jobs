@@ -36,7 +36,7 @@ public class LoadRelationshipToPatientDim {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimRelationshipWithAgent.dbtable"))
+                .option("dbtable", rtConfig.get("spark.dimRelationshipWithPatient.dbtable"))
                 .option("truncate", "true")
                 .mode(SaveMode.Overwrite)
                 .save();
