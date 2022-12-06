@@ -48,7 +48,7 @@ public class LoadFactOtz {
                 .option("password", rtConfig.get("spark.ods.password"))
                 .option("query", loadOtzLastEncounterCombinedQuery)
                 .load();
-        otzAndLastEncounterDataFrame.createOrReplaceTempView("otz_and_last_encounter_combined ");
+        otzAndLastEncounterDataFrame.createOrReplaceTempView("otz_and_last_encounter_combined");
         otzAndLastEncounterDataFrame.persist(StorageLevel.DISK_ONLY());
         otzAndLastEncounterDataFrame.printSchema();
 
