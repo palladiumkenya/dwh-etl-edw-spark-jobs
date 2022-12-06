@@ -156,10 +156,9 @@ public class LoadFactART {
         intermediateARTOutcomesDataFrame.persist(StorageLevel.DISK_ONLY());
         intermediateARTOutcomesDataFrame.createOrReplaceTempView("Intermediate_ARTOutcomes");
         String factArtQuery = loadFactART.loadQuery("LoadFactArt.sql");
+
         Dataset<Row> factArtDf = session.sql(factArtQuery);
         factArtDf.printSchema();
-        factArtDf.show();
-
         final int writePartitions = 20;
         factArtDf
                 .repartition(writePartitions)
