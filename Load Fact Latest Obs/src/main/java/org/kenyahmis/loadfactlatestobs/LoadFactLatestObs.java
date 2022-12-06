@@ -16,7 +16,7 @@ public class LoadFactLatestObs {
     public static void main(String[] args){
 
         SparkConf conf = new SparkConf();
-        conf.setAppName("Load OVC Fact");
+        conf.setAppName("Load Fact Latest Obs");
         SparkSession session = SparkSession.builder()
                 .config(conf)
                 .getOrCreate();
@@ -225,7 +225,6 @@ public class LoadFactLatestObs {
         Dataset<Row> latestObsDf = session.sql(latestObsQuery);
 
         latestObsDf.printSchema();
-        latestObsDf.printSchema();
         final int writePartitions = 20;
         latestObsDf
                 .repartition(writePartitions)
@@ -239,7 +238,6 @@ public class LoadFactLatestObs {
                 .option("truncate", "true")
                 .mode(SaveMode.Overwrite)
                 .save();
-
     }
 
     private String loadQuery(String fileName) {
