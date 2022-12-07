@@ -18,7 +18,7 @@ select
     otz_and_last_encounter_combined.ModulesCompletedToday_OTZ_Beyond,
     current_date() as LoadDate
 from otz_and_last_encounter_combined
-    left join DimPatient as patient on patient.PatientPK = otz_and_last_encounter_combined.PatientPK
+    left join DimPatient as patient on patient.PatientID = otz_and_last_encounter_combined.PatientID and patient.PatientPK = otz_and_last_encounter_combined.PatientPK
     and patient.SiteCode = otz_and_last_encounter_combined.SiteCode
     left join DimFacility as facility on facility.MFLCode = otz_and_last_encounter_combined.SiteCode
     left join DimDate as otz_enrollment on otz_enrollment.Date = otz_and_last_encounter_combined.OTZEnrollmentDate

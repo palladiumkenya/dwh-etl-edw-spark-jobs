@@ -158,8 +158,12 @@ public class LoadFactART {
         String factArtQuery = loadFactART.loadQuery("LoadFactArt.sql");
 
         Dataset<Row> factArtDf = session.sql(factArtQuery);
+//                .repartition(50);
         factArtDf.printSchema();
-        final int writePartitions = 20;
+        factArtDf.show();
+        long factARTCount = factArtDf.count();
+        logger.info("Fact ART Count is: " + factARTCount);
+        final int writePartitions = 50;
         factArtDf
                 .repartition(writePartitions)
                 .write()
@@ -172,8 +176,6 @@ public class LoadFactART {
                 .option("truncate", "true")
                 .mode(SaveMode.Overwrite)
                 .save();
-
-
     }
 
     private String loadQuery(String fileName) {

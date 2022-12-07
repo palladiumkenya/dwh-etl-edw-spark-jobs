@@ -124,8 +124,9 @@ public class LoadARTHistoryFact {
         }
 
         // TODO try merge??
-        Dataset<Row> artHistoryDf =  session.sql(query);
+        Dataset<Row> artHistoryDf = session.sql(query);
         artHistoryDf.printSchema();
+        artHistoryDf.show();
         final int writePartitions = 20;
         artHistoryDf
                 .repartition(writePartitions)

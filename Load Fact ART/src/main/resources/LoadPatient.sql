@@ -26,9 +26,8 @@ Select
         StartRegimen,
         lastRegimenline,
         StartRegimenline
-
 from
 ODS.dbo.CT_Patient Patient
-left join ODS.dbo.CT_ARTPatients ART on ART.PatientPK=Patient.Patientpk and ART.SiteCode=Patient.SiteCode
-left join ODS.dbo.PregnancyAsATInitiation   Pre on Pre.Patientpk= Patient.PatientPK and Pre.SiteCode=Patient.SiteCode
-left join ODS.dbo.Intermediate_LastPatientEncounter las on las.PatientPK collate Latin1_General_CI_AS=Patient.PatientPK collate Latin1_General_CI_AS and las.SiteCode collate Latin1_General_CI_AS=Patient.SiteCode collate Latin1_General_CI_AS
+left join ODS.dbo.CT_ARTPatients ART on ART.PatientID=Patient.PatientID and ART.SiteCode=Patient.SiteCode
+left join ODS.dbo.Intermediate_PregnancyAsATInitiation Pre on Pre.PatientID=Patient.PatientID and Pre.SiteCode=Patient.SiteCode
+left join ODS.dbo.Intermediate_LastPatientEncounter las on las.PatientID=Patient.PatientID  and las.SiteCode=Patient.SiteCode

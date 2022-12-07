@@ -23,8 +23,8 @@ Select
     Patient.PreviousARTRegimen,
     outcome.ARTOutcome,
     current_date() as LoadDate
-from  Patient
-    left join DimPatient as Pat on pat.PatientPK=Patient.PatientPk
+from Patient
+    left join DimPatient as Pat on pat.PatientID=Patient.PatientID and pat.PatientPK=Patient.PatientPK and pat.SiteCode=Patient.SiteCode
     left join Dimfacility fac on fac.MFLCode=Patient.SiteCode
     left join MFL_partner_agency_combination on MFL_partner_agency_combination.MFL_Code = Patient.SiteCode
     left join DimPartner as partner on partner.PartnerName = MFL_partner_agency_combination.SDP
@@ -36,4 +36,4 @@ from  Patient
     left join DimRegimenLine lastregline on lastregline.RegimenLine=Patient.LastRegimenLine
     left join DimRegimenLine firstregline on firstregline.RegimenLine=Patient.StartRegimenLine
     left join DimAgency as agency on agency.AgencyName = MFL_partner_agency_combination.Agency
-    left join Intermediate_ARTOutcomes  outcome on outcome.PatientPK=Patient.PatientPK and outcome.SiteCode=Patient.SiteCode
+    left join Intermediate_ARTOutcomes outcome on outcome.PatientID=Patient.PatientID and outcome.SiteCode=Patient.SiteCode
