@@ -15,8 +15,7 @@ select
     combined_table.Pregnant,
     current_date() as LoadDate
 from combined_table
-    left join DimPatient as patient on patient.PatientPK = combined_table.PatientPK and patient.PatientID = combined_table.PatientID
-    and patient.SiteCode = combined_table.SiteCode
+    left join DimPatient as patient on patient.PatientPK = combined_table.PatientPK and patient.SiteCode = combined_table.SiteCode
     left join DimFacility as facility on facility.MFLCode = combined_table.SiteCode
     left join MFL_partner_agency_combination on MFL_partner_agency_combination.MFL_Code = combined_table.SiteCode
     left join DimPartner as partner on partner.PartnerName = MFL_partner_agency_combination.SDP

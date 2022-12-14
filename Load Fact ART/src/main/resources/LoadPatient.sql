@@ -28,6 +28,6 @@ Select
         StartRegimenline
 from
 ODS.dbo.CT_Patient Patient
-left join ODS.dbo.CT_ARTPatients ART on ART.PatientID=Patient.PatientID and ART.SiteCode=Patient.SiteCode
-left join ODS.dbo.Intermediate_PregnancyAsATInitiation Pre on Pre.PatientID=Patient.PatientID and Pre.SiteCode=Patient.SiteCode
-left join ODS.dbo.Intermediate_LastPatientEncounter las on las.PatientID=Patient.PatientID  and las.SiteCode=Patient.SiteCode
+left join ODS.dbo.CT_ARTPatients ART on ART.PatientPK=Patient.PatientPK and ART.SiteCode=Patient.SiteCode
+left join ODS.dbo.Intermediate_PregnancyAsATInitiation Pre on Pre.PatientPK=Patient.PatientPK and Pre.SiteCode=Patient.SiteCode
+left join ODS.dbo.Intermediate_LastPatientEncounter las on las.PatientPK=Patient.PatientPK  and las.SiteCode=Patient.SiteCode

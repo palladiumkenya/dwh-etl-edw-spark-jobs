@@ -17,6 +17,5 @@ select
     datediff(yy, patient.DOB, last_encounter.LastEncounterDate) as AgeLastVisit
 from dbo.Intermediate_LastOTZVisit as otz
          left join dbo.Intermediate_LastPatientEncounter as last_encounter on last_encounter.PatientPK = otz.PatientPK
-    and last_encounter.SiteCode = otz.SiteCode and last_encounter.PatientID = otz.PatientID
-         left join dbo.CT_Patient as patient on patient.PatientID = otz.PatientID
-    and patient.SiteCode = otz.SiteCode and patient.PatientPK = otz.PatientPK
+    and last_encounter.SiteCode = otz.SiteCode
+         left join dbo.CT_Patient as patient on patient.SiteCode = otz.SiteCode and patient.PatientPK = otz.PatientPK

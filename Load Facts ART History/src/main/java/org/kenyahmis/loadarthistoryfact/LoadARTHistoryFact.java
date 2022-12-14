@@ -122,12 +122,11 @@ public class LoadARTHistoryFact {
             logger.error("Failed to load query from file", e);
             return;
         }
-
-        // TODO try merge??
         Dataset<Row> artHistoryDf = session.sql(query);
         artHistoryDf.printSchema();
-        artHistoryDf.show();
-        final int writePartitions = 20;
+        int numberOfPartitionsBeforeRepartition = artHistoryDf.rdd().getNumPartitions();
+        logger.info("Number of partitions before repartition: "+ numberOfPartitionsBeforeRepartition);
+        final int writePartitions = 100;
         artHistoryDf
                 .repartition(writePartitions)
                 .write()
@@ -138,6 +137,8 @@ public class LoadARTHistoryFact {
                 .option("password", rtConfig.get("spark.edw.password"))
                 .option("dbtable", rtConfig.get("spark.factArtHistory.dbtable"))
                 .option("truncate", "true")
+//                .option("isolationLevel", "NONE")
+//                .option("batchsize", 100000)
                 .mode(SaveMode.Overwrite)
                 .save();
     }

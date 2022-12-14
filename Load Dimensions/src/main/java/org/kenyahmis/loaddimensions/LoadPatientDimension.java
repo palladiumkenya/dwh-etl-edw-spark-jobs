@@ -9,7 +9,7 @@ public class LoadPatientDimension {
         RuntimeConfig rtConfig = session.conf();
         String sourcePatients = "SELECT DISTINCT patients.PatientID,patients.PatientPK,patients.SiteCode,Gender,DOB,MaritalStatus,NUPI,PatientType,PatientSource,eWHO,eWHODate,bWHO,bWHODate\n" +
                 " FROM [dbo].[CT_Patient] patients\n" +
-                " left join dbo.CT_PatientsWABWHOCD4 as wabwhocd4 on patients.PatientID = wabwhocd4.PatientID\n" +
+                " left join dbo.CT_PatientsWABWHOCD4 as wabwhocd4 on patients.PatientPK = wabwhocd4.PatientPK and wabwhocd4.SiteCode = patients.SiteCode\n" +
                 " WHERE patients.SiteCode >0";
         Dataset<Row> sourcePatientsDataframe = session.read()
                 .format("jdbc")
