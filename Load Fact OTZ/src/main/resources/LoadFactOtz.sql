@@ -24,6 +24,6 @@ from otz_and_last_encounter_combined
     left join DimDate as otz_enrollment on otz_enrollment.Date = otz_and_last_encounter_combined.OTZEnrollmentDate
     left join DimDate as last_visit on last_visit.Date = otz_and_last_encounter_combined.OTZEnrollmentDate
     left join MFL_partner_agency_combination on MFL_partner_agency_combination.MFL_Code = otz_and_last_encounter_combined.SiteCode
-    left join DimPartner as partner on partner.PartnerName = MFL_partner_agency_combination.SDP
+    left join DimPartner as partner on partner.PartnerName = upper(MFL_partner_agency_combination.SDP)
     left join DimAgency as agency on agency.AgencyName = MFL_partner_agency_combination.Agency
     left join DimAgeGroup as age_group on age_group.Age = otz_and_last_encounter_combined.AgeLastVisit

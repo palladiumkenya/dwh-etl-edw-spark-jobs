@@ -27,7 +27,7 @@ from Patient
     left join DimPatient as Pat on pat.PatientID=Patient.PatientID and pat.PatientPK=Patient.PatientPK and pat.SiteCode=Patient.SiteCode
     left join Dimfacility fac on fac.MFLCode=Patient.SiteCode
     left join MFL_partner_agency_combination on MFL_partner_agency_combination.MFL_Code = Patient.SiteCode
-    left join DimPartner as partner on partner.PartnerName = MFL_partner_agency_combination.SDP
+    left join DimPartner as partner on partner.PartnerName = upper(MFL_partner_agency_combination.SDP)
     left join DimAgeGroup as age_group on age_group.Age = Patient.AgeLastVisit
     left join DimDate as StartARTDate on StartARTDate.Date= Patient.StartARTDate
     left join DimDate as LastARTDate on  LastARTDate.Date=Patient.LastARTDate
