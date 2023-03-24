@@ -8,6 +8,7 @@
     <artifactId>edw-spark-jobs</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+
     <modules>
         <module>Load Dim Agency</module>
         <module>Load Dim Facilities</module>
@@ -37,7 +38,6 @@
         <module>Load Fact Covid</module>
         <module>Load Fact ART</module>
         <module>Load Fact ART History</module>
-
     </modules>
 
     <dependencyManagement>
@@ -63,7 +63,6 @@
                 <artifactId>mssql-jdbc</artifactId>
                 <version>11.2.1.jre8</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 

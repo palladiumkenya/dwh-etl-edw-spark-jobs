@@ -27,7 +27,6 @@
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
-            <version>11.2.1.jre8</version>
         </dependency>
 
     </dependencies>
@@ -70,6 +69,6 @@
                 </configuration>
             </plugin>
         </plugins>
-    </build>>
+    </build>
 
 </project>
