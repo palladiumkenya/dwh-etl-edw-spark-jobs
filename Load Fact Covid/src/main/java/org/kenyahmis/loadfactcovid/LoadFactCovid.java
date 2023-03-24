@@ -26,7 +26,7 @@ public class LoadFactCovid {
                 .option("driver", rtConfig.get("spark.ods.driver"))
                 .option("user", rtConfig.get("spark.ods.user"))
                 .option("password", rtConfig.get("spark.ods.password"))
-                .option("query", "select MFL_Code,SDP,[SDP Agency] as Agency from dbo.All_EMRSites")
+                .option("query", "select MFL_Code,SDP,[SDP_Agency] as Agency from dbo.All_EMRSites")
                 .load();
         dimMFLPartnerAgencyCombinationDataFrame.persist(StorageLevel.DISK_ONLY());
         dimMFLPartnerAgencyCombinationDataFrame.createOrReplaceTempView("MFL_partner_agency_combination");
