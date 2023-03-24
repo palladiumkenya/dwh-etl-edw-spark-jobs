@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>fact-client-tracing</artifactId>
+    <artifactId>load-hts-fact-client-tracing</artifactId>
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-core -->
