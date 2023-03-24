@@ -46,7 +46,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>org.kenyahmis.dimagency.LoadDimAgency</mainClass>
+                            <mainClass>org.kenyahmis.dimpartners.LoadDimPartners</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -46,7 +46,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>org.kenyahmis.loadfactotz.LoadFactOtz</mainClass>
+                            <mainClass>org.kenyahmis.dimpatients.LoadDimPatients</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

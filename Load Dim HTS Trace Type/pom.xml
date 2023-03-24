@@ -46,7 +46,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>org.kenyahmis.dimhtstraceoutcome.LoadDimHtsTraceOutcome</mainClass>
+                            <mainClass>org.kenyahmis.htstracetype.LoadDimHtsTraceType</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
