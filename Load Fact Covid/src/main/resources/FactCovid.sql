@@ -34,7 +34,7 @@ Select
     CauseOfDeath,
     current_date() as LoadDate
 from Covid
-    left join DimPatient as patient on patient.PatientPK = Covid.PatientPK and patient.SiteCode = Covid.SiteCode
+    left join DimPatient as patient on patient.PatientPKHash = Covid.PatientPKHash and patient.SiteCode = Covid.SiteCode
     left join DimFacility as facility on facility.MFLCode = Covid.SiteCode
     left join MFL_partner_agency_combination on MFL_partner_agency_combination.MFL_Code = Covid.SiteCode
     left join DimPartner as partner on partner.PartnerName = upper(MFL_partner_agency_combination.SDP)

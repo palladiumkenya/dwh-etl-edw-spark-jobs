@@ -1,4 +1,5 @@
 select
+    patient.PatientPKHash,
     patient.PatientPK,
     patient.SiteCode,
     patient.PatientID,

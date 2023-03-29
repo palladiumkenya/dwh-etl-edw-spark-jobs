@@ -1,19 +1,19 @@
 Select
-    Patient.PatientID,
-    Patient.PatientPK,
+    Patient.PatientIDHash,
+    Patient.PatientPKHash,
     cast (Patient.SiteCode as nvarchar) As SiteCode,
     DATEDIFF(yy,Patient.DOB,Patient.RegistrationAtCCC) AgeAtEnrol,
     DATEDIFF(yy,Patient.DOB,ART.StartARTDate) AgeAtARTStart,
     ART.StartARTAtThisfacility,
     ART.PreviousARTStartDate,
     ART.PreviousARTRegimen,
-    StartARTDate,
+    ART.StartARTDate,
     LastARTDate,
     CASE WHEN [DateConfirmedHIVPositive] IS NOT NULL AND ART.StartARTDate IS NOT NULL
     THEN CASE WHEN DateConfirmedHIVPositive<= ART.StartARTDate THEN DATEDIFF(DAY,DateConfirmedHIVPositive,ART.StartARTDate)
 					ELSE NULL END
 				ELSE NULL END AS TimetoARTDiagnosis,
-    CASE WHEN Patient.RegistrationAtCCC IS NOT NULL AND ART.StartARTDate IS NOT NULL
+      CASE WHEN Patient.RegistrationAtCCC IS NOT NULL AND ART.StartARTDate IS NOT NULL
 				THEN CASE WHEN Patient.RegistrationAtCCC<=ART.StartARTDate  THEN DATEDIFF(DAY,Patient.[RegistrationAtCCC],ART.StartARTDate)
 				ELSE NULL END
 				ELSE NULL END AS TimetoARTEnrollment,
@@ -25,9 +25,12 @@ Select
         lastRegimen,
         StartRegimen,
         lastRegimenline,
-        StartRegimenline
+        StartRegimenline,
+        outcome.ARTOutcome
+
 from
-ODS.dbo.CT_Patient Patient
-left join ODS.dbo.CT_ARTPatients ART on ART.PatientPK=Patient.PatientPK and ART.SiteCode=Patient.SiteCode
-left join ODS.dbo.Intermediate_PregnancyAsATInitiation Pre on Pre.PatientPK=Patient.PatientPK and Pre.SiteCode=Patient.SiteCode
-left join ODS.dbo.Intermediate_LastPatientEncounter las on las.PatientPK=Patient.PatientPK  and las.SiteCode=Patient.SiteCode
+dbo.CT_Patient Patient
+inner join dbo.CT_ARTPatients ART on ART.PatientPK=Patient.Patientpk and ART.SiteCode=Patient.SiteCode
+left join dbo.Intermediate_PregnancyAsATInitiation Pre on Pre.Patientpk= Patient.PatientPK and Pre.SiteCode=Patient.SiteCode
+left join dbo.Intermediate_LastPatientEncounter las on las.PatientPK =Patient.PatientPK  and las.SiteCode =Patient.SiteCode
+left join dbo.Intermediate_ARTOutcomes outcome on outcome.PatientPK=Patient.PatientPK and outcome.SiteCode=Patient.SiteCode

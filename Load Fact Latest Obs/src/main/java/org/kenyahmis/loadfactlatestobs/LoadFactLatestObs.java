@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import static org.apache.spark.sql.functions.*;
 
 public class LoadFactLatestObs {
     private static final Logger logger = LoggerFactory.getLogger(LoadFactLatestObs.class);
@@ -145,7 +146,7 @@ public class LoadFactLatestObs {
                 .option("driver", rtConfig.get("spark.ods.driver"))
                 .option("user", rtConfig.get("spark.ods.user"))
                 .option("password", rtConfig.get("spark.ods.password"))
-                .option("query", "select * from dbo.CT_Patient")
+                .option("dbtable", "dbo.CT_Patient")
                 .load();
         patientDataFrame.persist(StorageLevel.DISK_ONLY());
         patientDataFrame.createOrReplaceTempView("patient");
@@ -223,6 +224,7 @@ public class LoadFactLatestObs {
         // latest Obs df
         String latestObsQuery = loadFactLatestObs.loadQuery("FactLatestObs.sql");
         Dataset<Row> latestObsDf = session.sql(latestObsQuery);
+        latestObsDf = latestObsDf.withColumn("Factkey", monotonically_increasing_id().plus(5));
 
         latestObsDf.printSchema();
         final int writePartitions = 20;
@@ -235,7 +237,6 @@ public class LoadFactLatestObs {
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
                 .option("dbtable", rtConfig.get("spark.factLatestObs.dbtable"))
-                .option("truncate", "true")
                 .mode(SaveMode.Overwrite)
                 .save();
     }

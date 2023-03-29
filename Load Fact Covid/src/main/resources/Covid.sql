@@ -1,14 +1,14 @@
-SELECT ROW_NUMBER()OVER(PARTITION BY Covid.PatientID,Covid.PatientPK,Covid.SiteCode ORDER BY Covid19AssessmentDate Desc)AS RowNumber,
-       cast (Covid.PatientID as nvarchar) As PatientID ,
-       cast (Covid.PatientPK as nvarchar) As PatientPK,
-       cast (Covid.SiteCode as nvarchar) As SiteCode,
+SELECT ROW_NUMBER()OVER(PARTITION BY Covid.PatientIDHash,Covid.PatientPKHash,Covid.SiteCode ORDER BY Covid19AssessmentDate Desc)AS RowNumber,
+       Covid.PatientIDHash  ,
+       Covid.PatientPKHash ,
+       Covid.SiteCode,
        Covid.FacilityName,
        VisitID,
        Max (Covid19AssessmentDate)Covid19AssessmentDate ,
        ReceivedCOVID19Vaccine ,
        DateGivenFirstDose ,
-       FirstDoseVaccineAdministered
-        ,DateGivenSecondDose,
+       FirstDoseVaccineAdministered,
+       DateGivenSecondDose,
        SecondDoseVaccineAdministered ,
        VaccinationStatus ,
        VaccineVerification ,
@@ -34,11 +34,11 @@ SELECT ROW_NUMBER()OVER(PARTITION BY Covid.PatientID,Covid.PatientPK,Covid.SiteC
        CauseOfDeath,
        datediff(yy, patient.DOB, last_encounter.LastEncounterDate) as AgeLastVisit
 from ODS.dbo.CT_Covid as Covid
-         left join ODS.dbo.CT_Patient as patient on patient.PatientPK = Covid.PatientPK and patient.SiteCode = Covid.SiteCode
-         left join ODS.dbo.Intermediate_LastPatientEncounter as last_encounter on last_encounter.PatientPK = Covid.PatientPK and last_encounter.SiteCode = Covid.SiteCode
+         left join ODS.dbo.CT_Patient as patient on patient.PatientPKHash = Covid.PatientPKHash and patient.SiteCode = Covid.SiteCode
+         left join ODS.dbo.Intermediate_LastPatientEncounter as last_encounter on last_encounter.PatientPKHash = Covid.PatientPKHash and last_encounter.SiteCode = Covid.SiteCode
 group by
-    Covid.PatientID,
-    Covid.PatientPK,
+    Covid.PatientIDHash,
+    Covid.PatientPKHash,
     PatientStatus,
     PatientStatusSinceLastVisit,
     Covid.SiteCode,

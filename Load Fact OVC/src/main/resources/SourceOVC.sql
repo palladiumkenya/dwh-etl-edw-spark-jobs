@@ -1,6 +1,8 @@
 select
     distinct ovc.PatientPK,
              ovc.PatientID,
+             ovc.PatientPKHash,
+             ovc.PatientIDHash,
              ovc.SiteCode,
              OVCEnrollmentDate,
              RelationshipToClient,

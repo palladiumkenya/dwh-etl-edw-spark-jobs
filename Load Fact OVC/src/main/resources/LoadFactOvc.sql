@@ -13,7 +13,7 @@ select
     exit_date.DateKey as OVCExitDateKey,
     current_date() as LoadDate
 from source_ovc
-    left join DimPatient as patient on patient.PatientPK = source_ovc.PatientPK
+    left join DimPatient as patient on patient.PatientPKHash = source_ovc.PatientPKHash
     and patient.SiteCode = source_ovc.SiteCode
     left join DimFacility as facility on facility.MFLCode = source_ovc.SiteCode
     left join DimDate as ovc_enrollment on ovc_enrollment.Date = source_ovc.OVCEnrollmentDate

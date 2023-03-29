@@ -10,6 +10,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <modules>
+        <module>Load Dim Date</module>
         <module>Load Dim Agency</module>
         <module>Load Dim Facilities</module>
         <module>Load Dim Partners</module>

@@ -13,7 +13,7 @@ end as IsTXCurr,
 from txcurr_report
 left join as_of on as_of.Date = txcurr_report.AsOfDate
 left join facility on facility.MFLCode = txcurr_report.MFLCode
-left join patient on patient.SiteCode = txcurr_report.MFLCode and patient.PatientPK = txcurr_report.PatientPK
+left join patient on patient.PatientPKHash =  txcurr_report.PatientPKHash and patient.SiteCode = txcurr_report.MFLCode
 left join mfl_partner_agency_combination on mfl_partner_agency_combination.MFL_Code = txcurr_report.MFLCode
 left join partner on partner.PartnerName = upper(mfl_partner_agency_combination.SDP)
 left join agency on agency.AgencyName = mfl_partner_agency_combination.Agency

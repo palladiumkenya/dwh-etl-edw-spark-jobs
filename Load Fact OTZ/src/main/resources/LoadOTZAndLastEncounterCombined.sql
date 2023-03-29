@@ -1,6 +1,8 @@
 select
     otz.PatientID,
     otz.PatientPK,
+    otz.PatientIDHash,
+    otz.PatientPKHash,
     otz.SiteCode,
     otz.OTZEnrollmentDate,
     otz.LastVisitDate,

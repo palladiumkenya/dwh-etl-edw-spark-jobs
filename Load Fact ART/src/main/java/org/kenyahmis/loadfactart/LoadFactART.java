@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import static org.apache.spark.sql.functions.*;
 
 public class LoadFactART {
     private static final Logger logger = LoggerFactory.getLogger(LoadFactART.class);
@@ -134,16 +135,16 @@ public class LoadFactART {
         dimRegimenLineDataFrame.persist(StorageLevel.DISK_ONLY());
         dimRegimenLineDataFrame.createOrReplaceTempView("DimRegimenLine");
 
-        Dataset<Row> dimDrugDataFrame = session.read()
+        Dataset<Row> dimArtOutcomeDf = session.read()
                 .format("jdbc")
                 .option("url", rtConfig.get("spark.edw.url"))
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimDrug.dbtable"))
+                .option("dbtable", "dbo.DimARTOutcome")
                 .load();
-        dimDrugDataFrame.persist(StorageLevel.DISK_ONLY());
-        dimDrugDataFrame.createOrReplaceTempView("DimDrug");
+        dimArtOutcomeDf.persist(StorageLevel.DISK_ONLY());
+        dimArtOutcomeDf.createOrReplaceTempView("DimARTOutcome");
 
         Dataset<Row> intermediateARTOutcomesDataFrame = session.read()
                 .format("jdbc")
@@ -151,13 +152,14 @@ public class LoadFactART {
                 .option("driver", rtConfig.get("spark.ods.driver"))
                 .option("user", rtConfig.get("spark.ods.user"))
                 .option("password", rtConfig.get("spark.ods.password"))
-                .option("dbtable", rtConfig.get("spark.intermediateArtOutcomes.dbtable"))
+                .option("dbtable", "dbo.Intermediate_ARTOutcomes ")
                 .load();
         intermediateARTOutcomesDataFrame.persist(StorageLevel.DISK_ONLY());
         intermediateARTOutcomesDataFrame.createOrReplaceTempView("Intermediate_ARTOutcomes");
         String factArtQuery = loadFactART.loadQuery("LoadFactArt.sql");
 
         Dataset<Row> factArtDf = session.sql(factArtQuery);
+        factArtDf = factArtDf.withColumn("FactKey", monotonically_increasing_id().plus(5));
         factArtDf.printSchema();
         long factARTCount = factArtDf.count();
         logger.info("Fact ART Count is: " + factARTCount);
@@ -171,7 +173,6 @@ public class LoadFactART {
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
                 .option("dbtable", rtConfig.get("spark.factArt.dbtable"))
-                .option("truncate", "true")
                 .mode(SaveMode.Overwrite)
                 .save();
     }
