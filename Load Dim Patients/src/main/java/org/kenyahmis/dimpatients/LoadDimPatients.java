@@ -95,6 +95,8 @@ public class LoadDimPatients {
 
         WindowSpec window = Window.orderBy("DOB");
         dimPatients = dimPatients.withColumn("PatientKey",  row_number().over(window));
+        logger.info("Writing final Dimpatient DF");
+        dimPatients.printSchema();
         dimPatients
                 .repartition(Integer.parseInt(rtConfig.get("spark.default.numpartitions")))
                 .write()

@@ -5,7 +5,7 @@ select
     combined_data_ct_hts_prep.PrepNumber,
     combined_data_ct_hts_prep.SiteCode,
     combined_data_ct_hts_prep.NUPI,
-    combined_data_ct_hts_prep.DOB,
+    cast(combined_data_ct_hts_prep.DOB as date) as DOB,
     combined_data_ct_hts_prep.MaritalStatus,
     CASE
     WHEN combined_data_ct_hts_prep.Gender = 'M' THEN 'Male'
