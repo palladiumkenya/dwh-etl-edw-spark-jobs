@@ -114,8 +114,6 @@ public class LoadFactCovid {
         String factCovidQuery = loadFactCovid.loadQuery("FactCovid.sql");
         Dataset<Row> factCovidDf = session.sql(factCovidQuery);
         factCovidDf.printSchema();
-        factCovidDf.show();
-
         final int writePartitions = 20;
         factCovidDf
                 .repartition(writePartitions)
