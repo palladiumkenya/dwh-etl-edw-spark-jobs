@@ -1,8 +1,10 @@
 Select
+    monotonically_increasing_id() + 1 as Factkey,
     Patient.PatientKey,
     facility.FacilityKey,
     partner.PartnerKey,
     agency.AgencyKey,
+    age_group.AgeGroupKey,
     VisitID,
     Covid19AssessmentDate.Datekey As Covid19AssessmentDateKey,
     ReceivedCOVID19Vaccine ,
@@ -32,7 +34,7 @@ Select
     PatientVentilated,
     TracingFinalOutcome ,
     CauseOfDeath,
-    current_date() as LoadDate
+    cast(current_date() as date) as LoadDate
 from Covid
     left join DimPatient as patient on patient.PatientPKHash = Covid.PatientPKHash and patient.SiteCode = Covid.SiteCode
     left join DimFacility as facility on facility.MFLCode = Covid.SiteCode
@@ -47,4 +49,4 @@ from Covid
     left join DimDate as COVID19TestDate  on COVID19TestDate.Date = Covid.COVID19TestDate
     left join DimDate as AdmissionStartDate  on AdmissionStartDate.Date = Covid.AdmissionStartDate
     left join DimDate as AdmissionEndDate  on AdmissionEndDate.Date = Covid.AdmissionEndDate
-where RowNumber=1;
+Where RowNumber = 1;
