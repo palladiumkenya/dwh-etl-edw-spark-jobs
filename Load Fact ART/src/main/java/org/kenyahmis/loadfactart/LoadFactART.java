@@ -159,7 +159,7 @@ public class LoadFactART {
         String factArtQuery = loadFactART.loadQuery("LoadFactArt.sql");
 
         Dataset<Row> factArtDf = session.sql(factArtQuery);
-        factArtDf = factArtDf.withColumn("FactKey", monotonically_increasing_id().plus(5));
+        factArtDf = factArtDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
         factArtDf.printSchema();
         long factARTCount = factArtDf.count();
         logger.info("Fact ART Count is: " + factARTCount);
