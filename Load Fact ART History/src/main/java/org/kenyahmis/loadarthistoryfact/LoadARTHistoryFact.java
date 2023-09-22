@@ -50,7 +50,7 @@ public class LoadARTHistoryFact {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimPatient.dbtable"))
+                .option("dbtable", "dbo.DimPatient")
                 .load();
         dimPatientDataFrame.persist(StorageLevel.DISK_ONLY());
         dimPatientDataFrame.createOrReplaceTempView("patient");
@@ -94,7 +94,6 @@ public class LoadARTHistoryFact {
                 .option("driver", rtConfig.get("spark.ods.driver"))
                 .option("user", rtConfig.get("spark.ods.user"))
                 .option("password", rtConfig.get("spark.ods.password"))
-                .option("dbtable", rtConfig.get("spark.historicalArtOutcomeBase.dbtable"))
                 .option("dbtable", "dbo.HistoricalARTOutcomesBaseTable")
                 .load();
         dimHistoricalARTOutcomeBaseDataFrame.persist(StorageLevel.DISK_ONLY());
