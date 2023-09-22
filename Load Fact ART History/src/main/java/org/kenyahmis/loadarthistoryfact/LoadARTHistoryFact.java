@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import static org.apache.spark.sql.functions.monotonically_increasing_id;
 
 public class LoadARTHistoryFact {
     private static final Logger logger = LoggerFactory.getLogger(LoadARTHistoryFact.class);
@@ -27,7 +28,7 @@ public class LoadARTHistoryFact {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimDate.dbtable"))
+                .option("dbtable", "dbo.DimDate")
                 .load();
         dimDateDataFrame.persist(StorageLevel.DISK_ONLY());
         dimDateDataFrame.createOrReplaceTempView("as_of");
@@ -38,7 +39,7 @@ public class LoadARTHistoryFact {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimFacility.dbtable"))
+                .option("dbtable", "dbo.DimFacility")
                 .load();
         dimFacilityDataFrame.persist(StorageLevel.DISK_ONLY());
         dimFacilityDataFrame.createOrReplaceTempView("facility");
@@ -60,7 +61,7 @@ public class LoadARTHistoryFact {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimPartner.dbtable"))
+                .option("dbtable", "dbo.DimPartner")
                 .load();
         dimPartnerDataFrame.persist(StorageLevel.DISK_ONLY());
         dimPartnerDataFrame.createOrReplaceTempView("partner");
@@ -71,7 +72,7 @@ public class LoadARTHistoryFact {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimAgency.dbtable"))
+                .option("dbtable", "dbo.DimAgency")
                 .load();
         dimAgencyDataFrame.persist(StorageLevel.DISK_ONLY());
         dimAgencyDataFrame.createOrReplaceTempView("agency");
@@ -82,7 +83,7 @@ public class LoadARTHistoryFact {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimARTOutcome.dbtable"))
+                .option("dbtable", "dbo.DimARTOutcome")
                 .load();
         dimARTOutcomeDataFrame.persist(StorageLevel.DISK_ONLY());
         dimARTOutcomeDataFrame.createOrReplaceTempView("art_outcome");
@@ -94,6 +95,7 @@ public class LoadARTHistoryFact {
                 .option("user", rtConfig.get("spark.ods.user"))
                 .option("password", rtConfig.get("spark.ods.password"))
                 .option("dbtable", rtConfig.get("spark.historicalArtOutcomeBase.dbtable"))
+                .option("dbtable", "dbo.HistoricalARTOutcomesBaseTable")
                 .load();
         dimHistoricalARTOutcomeBaseDataFrame.persist(StorageLevel.DISK_ONLY());
         dimHistoricalARTOutcomeBaseDataFrame.createOrReplaceTempView("txcurr_report");
@@ -123,6 +125,7 @@ public class LoadARTHistoryFact {
             return;
         }
         Dataset<Row> artHistoryDf = session.sql(query);
+        artHistoryDf = artHistoryDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
         artHistoryDf.printSchema();
         int numberOfPartitionsBeforeRepartition = artHistoryDf.rdd().getNumPartitions();
         logger.info("Number of partitions before repartition: "+ numberOfPartitionsBeforeRepartition);
@@ -135,7 +138,7 @@ public class LoadARTHistoryFact {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.factArtHistory.dbtable"))
+                .option("dbtable", "dbo.FactARTHistory")
                 .option("truncate", "true")
                 .mode(SaveMode.Overwrite)
                 .save();
