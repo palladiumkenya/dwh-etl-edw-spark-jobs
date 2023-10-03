@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import static org.apache.spark.sql.functions.monotonically_increasing_id;
 
 public class LoadFactOtz {
     private static final Logger logger = LoggerFactory.getLogger(LoadFactOtz.class);
@@ -58,7 +59,7 @@ public class LoadFactOtz {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimDate.dbtable"))
+                .option("dbtable", "dbo.DimDate")
                 .load();
         dimDateDataFrame.persist(StorageLevel.DISK_ONLY());
         dimDateDataFrame.createOrReplaceTempView("DimDate");
@@ -69,7 +70,7 @@ public class LoadFactOtz {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimFacility.dbtable"))
+                .option("dbtable", "dbo.DimFacility")
                 .load();
         dimFacilityDataFrame.persist(StorageLevel.DISK_ONLY());
         dimFacilityDataFrame.createOrReplaceTempView("Dimfacility");
@@ -80,7 +81,7 @@ public class LoadFactOtz {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimPatient.dbtable"))
+                .option("dbtable", "dbo.DimPatient")
                 .load();
         dimPatientDataFrame.persist(StorageLevel.DISK_ONLY());
         dimPatientDataFrame.createOrReplaceTempView("DimPatient");
@@ -91,7 +92,7 @@ public class LoadFactOtz {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimPartner.dbtable"))
+                .option("dbtable", "dbo.DimPartner")
                 .load();
         dimPartnerDataFrame.persist(StorageLevel.DISK_ONLY());
         dimPartnerDataFrame.createOrReplaceTempView("DimPartner");
@@ -102,7 +103,7 @@ public class LoadFactOtz {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimAgency.dbtable"))
+                .option("dbtable", "dbo.DimAgency")
                 .load();
         dimAgencyDataFrame.persist(StorageLevel.DISK_ONLY());
         dimAgencyDataFrame.createOrReplaceTempView("DimAgency");
@@ -113,13 +114,14 @@ public class LoadFactOtz {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimAgeGroup.dbtable"))
+                .option("dbtable", "dbo.DimAgeGroup")
                 .load();
         dimAgeGroupDataFrame.persist(StorageLevel.DISK_ONLY());
         dimAgeGroupDataFrame.createOrReplaceTempView("DimAgeGroup");
 
         String factOtzQuery = loadFactOtz.loadQuery("LoadFactOtz.sql");
         Dataset<Row> factOtzDf = session.sql(factOtzQuery);
+        factOtzDf = factOtzDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
         factOtzDf.printSchema();
         final int writePartitions = 20;
         factOtzDf
@@ -130,7 +132,7 @@ public class LoadFactOtz {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.factOtz.dbtable"))
+                .option("dbtable", "dbo.FactOTZ")
                 .option("truncate", "true")
                 .mode(SaveMode.Overwrite)
                 .save();
