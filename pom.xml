@@ -39,6 +39,9 @@
         <module>Load Fact Covid</module>
         <module>Load Fact ART</module>
         <module>Load Fact ART History</module>
+        <module>Load Fact Adverse Events</module>
+        <module>Load Fact Patient Exits</module>
+        <module>Load Fact CD4</module>
     </modules>
 
     <dependencyManagement>
