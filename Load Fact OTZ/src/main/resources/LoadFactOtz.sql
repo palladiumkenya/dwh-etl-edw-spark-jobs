@@ -7,6 +7,7 @@ select
     otz_enrollment.DateKey as OTZEnrollmentDateKey,
     last_visit.DateKey as LastVisitDateKey,
     otz_and_last_encounter_combined.TransferInStatus,
+    otz_and_last_encounter_combined.TransitionAttritionReason,
     otz_and_last_encounter_combined.ModulesPreviouslyCovered,
     otz_and_last_encounter_combined.ModulesCompletedToday_OTZ_Orientation,
     otz_and_last_encounter_combined.ModulesCompletedToday_OTZ_Participation,
