@@ -50,7 +50,7 @@ public class LoadFactPatientExits {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", "NDWH.dbo.DimDate")
+                .option("dbtable", "dbo.DimDate")
                 .load();
         dimDateDataFrame.persist(StorageLevel.DISK_ONLY());
         dimDateDataFrame.createOrReplaceTempView("DimDate");
@@ -61,7 +61,7 @@ public class LoadFactPatientExits {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", "NDWH.dbo.DimFacility")
+                .option("dbtable", "dbo.DimFacility")
                 .load();
         dimFacilityDataFrame.persist(StorageLevel.DISK_ONLY());
         dimFacilityDataFrame.createOrReplaceTempView("facility");
@@ -83,7 +83,7 @@ public class LoadFactPatientExits {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", "NDWH.dbo.DimPartner")
+                .option("dbtable", "dbo.DimPartner")
                 .load();
         dimPartnerDataFrame.persist(StorageLevel.DISK_ONLY());
         dimPartnerDataFrame.createOrReplaceTempView("partner");
@@ -94,7 +94,7 @@ public class LoadFactPatientExits {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", "NDWH.dbo.DimAgency")
+                .option("dbtable", "dbo.DimAgency")
                 .load();
         dimAgencyDataFrame.persist(StorageLevel.DISK_ONLY());
         dimAgencyDataFrame.createOrReplaceTempView("agency");

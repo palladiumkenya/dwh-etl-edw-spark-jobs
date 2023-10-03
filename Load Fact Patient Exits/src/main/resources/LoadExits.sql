@@ -10,7 +10,7 @@ from (
              PatientID,
              PatientPKHash,
              SiteCode
-         from DataExchange.dbo.CT_PatientStatus
+         from ODS.dbo.CT_PatientStatus
          where ExitReason is not null
      )	Exits
          left join (
@@ -19,7 +19,7 @@ from (
         PatientPKHash,
         SiteCode,
         ExitDate as dtDead
-    from DataExchange.dbo.CT_PatientStatus
+    from ODS.dbo.CT_PatientStatus
     where ExitReason in ('Died','death')
 ) Died on Died.PatientPKHash=Exits.PatientPKHash and Died.SiteCode=Exits.SiteCode
          left join (
@@ -28,7 +28,7 @@ from (
         PatientPKHash,
         SiteCode,
         ExitDate as dtARTStop
-    from DataExchange.dbo.CT_PatientStatus
+    from ODS.dbo.CT_PatientStatus
     where ExitReason in ('Stopped','Stopped Treatment')
 ) [Stopped] on [Stopped].PatientPKHash=Exits.PatientPKHash and [Stopped].SiteCode=Exits.SiteCode
          left join (
@@ -37,7 +37,7 @@ from (
         PatientPK,
         SiteCode,
         ExitDate as dtTO
-    from DataExchange.dbo.CT_PatientStatus
+    from ODS.dbo.CT_PatientStatus
     where ExitReason in ('Transfer Out','transfer_out','Transferred out','Transfer')
 ) TransferOut on TransferOut.PatientPK=Exits.PatientPKHash and TransferOut.SiteCode=Exits.SiteCode
          left join (
@@ -46,6 +46,6 @@ from (
         PatientPKHash,
         SiteCode,
         ExitDate as dtLTFU
-    from DataExchange.dbo.CT_PatientStatus
+    from ODS.dbo.CT_PatientStatus
     where ExitReason in ('Lost','Lost to followup','LTFU')
 ) LTFU on LTFU.PatientPKHash=Exits.PatientPKHash and LTFU.SiteCode=Exits.SiteCode
