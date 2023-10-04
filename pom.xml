@@ -42,6 +42,7 @@
         <module>Load Fact Adverse Events</module>
         <module>Load Fact Patient Exits</module>
         <module>Load Fact CD4</module>
+        <module>Load Fact Defaulter Tracing</module>
     </modules>
 
     <dependencyManagement>
