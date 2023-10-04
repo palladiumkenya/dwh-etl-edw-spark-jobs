@@ -43,6 +43,8 @@
         <module>Load Fact Patient Exits</module>
         <module>Load Fact CD4</module>
         <module>Load Fact Defaulter Tracing</module>
+        <module>Load Fact Manifest</module>
+        <module>Load Fact Viral Load</module>
     </modules>
 
     <dependencyManagement>
