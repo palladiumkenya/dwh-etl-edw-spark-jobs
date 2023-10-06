@@ -3,6 +3,8 @@ package org.kenyahmis.loadregimenlinedim;
 import org.apache.commons.io.IOUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.*;
+import org.apache.spark.sql.expressions.Window;
+import org.apache.spark.sql.expressions.WindowSpec;
 import org.apache.spark.storage.StorageLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+
+import static org.apache.spark.sql.functions.row_number;
 
 public class LoadRegimenLineDimension {
     private static final Logger logger = LoggerFactory.getLogger(LoadRegimenLineDimension.class);
@@ -68,6 +72,8 @@ public class LoadRegimenLineDimension {
 
         Dataset<Row> dimeRegimenLineDf = session.sql("SELECT enriched_source_regimen_line.*," +
                 "current_date() AS LoadDate FROM enriched_source_regimen_line");
+        WindowSpec window = Window.orderBy("RegimenLine");
+        dimeRegimenLineDf = dimeRegimenLineDf.withColumn("RegimenLineKey",  row_number().over(window));
 
         final int writePartitions = 20;
         dimeRegimenLineDf.printSchema();
@@ -79,7 +85,7 @@ public class LoadRegimenLineDimension {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimRegimenLine.dbtable"))
+                .option("dbtable", "dbo.DimRegimenLine")
                 .option("truncate", "true")
                 .mode(SaveMode.Overwrite)
                 .save();
