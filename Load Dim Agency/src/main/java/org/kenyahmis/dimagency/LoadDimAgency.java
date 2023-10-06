@@ -5,6 +5,7 @@ import org.apache.spark.sql.*;
 import org.apache.spark.sql.expressions.Window;
 import org.apache.spark.sql.expressions.WindowSpec;
 
+import static org.apache.spark.sql.functions.current_date;
 import static org.apache.spark.sql.functions.row_number;
 
 public class LoadDimAgency {
@@ -32,6 +33,7 @@ public class LoadDimAgency {
         Dataset<Row> dimAgencyDf = session.sql("SELECT upper(Agency) AS AgencyName,current_date() as LoadDate FROM source_agency");
         WindowSpec window = Window.orderBy("AgencyName");
         dimAgencyDf = dimAgencyDf.withColumn("AgencyKey",  row_number().over(window));
+        dimAgencyDf = dimAgencyDf.withColumn("LoadDate", current_date());
 
         dimAgencyDf.write()
                 .format("jdbc")
