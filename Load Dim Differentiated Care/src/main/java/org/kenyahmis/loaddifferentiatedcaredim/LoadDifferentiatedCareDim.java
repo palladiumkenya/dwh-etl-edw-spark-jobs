@@ -3,6 +3,8 @@ package org.kenyahmis.loaddifferentiatedcaredim;
 import org.apache.commons.io.IOUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.*;
+import org.apache.spark.sql.expressions.Window;
+import org.apache.spark.sql.expressions.WindowSpec;
 import org.apache.spark.storage.StorageLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
-import static org.apache.spark.sql.functions.col;
-import static org.apache.spark.sql.functions.upper;
+import static org.apache.spark.sql.functions.*;
 
 public class LoadDifferentiatedCareDim {
     private static final Logger logger = LoggerFactory.getLogger(LoadDifferentiatedCareDim.class);
@@ -53,8 +54,12 @@ public class LoadDifferentiatedCareDim {
         differentiatedCareDataframe.persist(StorageLevel.DISK_ONLY());
         differentiatedCareDataframe.createOrReplaceTempView("differentiated_care");
 
+        WindowSpec window = Window.orderBy("DifferentiatedCare");
+        differentiatedCareDataframe = differentiatedCareDataframe.withColumn("DifferentiatedCareKey",  row_number().over(window));
         differentiatedCareDataframe = differentiatedCareDataframe
                 .withColumn("DifferentiatedCare", upper(col("DifferentiatedCare")));
+        differentiatedCareDataframe = differentiatedCareDataframe
+                .withColumn("LoadDate", current_date());
 
         differentiatedCareDataframe.printSchema();
         final int writePartitions = 20;
@@ -66,7 +71,7 @@ public class LoadDifferentiatedCareDim {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimDifferentiatedCare.dbtable"))
+                .option("dbtable", "dbo.DimDifferentiatedCare")
                 .option("truncate", "true")
                 .mode(SaveMode.Overwrite)
                 .save();

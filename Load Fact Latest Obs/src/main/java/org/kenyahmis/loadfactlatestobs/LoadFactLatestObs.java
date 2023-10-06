@@ -34,126 +34,18 @@ public class LoadFactLatestObs {
         dimMFLPartnerAgencyCombinationDataFrame.persist(StorageLevel.DISK_ONLY());
         dimMFLPartnerAgencyCombinationDataFrame.createOrReplaceTempView("MFL_partner_agency_combination");
 
+        Dataset<Row> intermediateLatestObsDataFrame = session.read()
+                .format("jdbc")
+                .option("url", rtConfig.get("spark.ods.url"))
+                .option("driver", rtConfig.get("spark.ods.driver"))
+                .option("user", rtConfig.get("spark.ods.user"))
+                .option("password", rtConfig.get("spark.ods.password"))
+                .option("dbtable", "dbo.intermediate_LatestObs")
+                .load();
+        intermediateLatestObsDataFrame.persist(StorageLevel.DISK_ONLY());
+        intermediateLatestObsDataFrame.createOrReplaceTempView("obs");
+
         LoadFactLatestObs loadFactLatestObs = new LoadFactLatestObs();
-        // latest weigh height
-        String latestWeighHeightQuery = loadFactLatestObs.loadQuery("LatestWeightHeight.sql");
-        Dataset<Row> latestWeightHeightDataFrame = session.read()
-                .format("jdbc")
-                .option("url", rtConfig.get("spark.ods.url"))
-                .option("driver", rtConfig.get("spark.ods.driver"))
-                .option("user", rtConfig.get("spark.ods.user"))
-                .option("password", rtConfig.get("spark.ods.password"))
-                .option("query", latestWeighHeightQuery)
-                .load();
-        latestWeightHeightDataFrame.persist(StorageLevel.DISK_ONLY());
-        latestWeightHeightDataFrame.createOrReplaceTempView("latest_weight_height");
-
-        // Age of last visit
-        String ageOfLastVisitQuery = loadFactLatestObs.loadQuery("AgeOfLastVisit.sql");
-        Dataset<Row> ageOfLastVisitDataFrame = session.read()
-                .format("jdbc")
-                .option("url", rtConfig.get("spark.ods.url"))
-                .option("driver", rtConfig.get("spark.ods.driver"))
-                .option("user", rtConfig.get("spark.ods.user"))
-                .option("password", rtConfig.get("spark.ods.password"))
-                .option("query", ageOfLastVisitQuery)
-                .load();
-        ageOfLastVisitDataFrame.persist(StorageLevel.DISK_ONLY());
-        ageOfLastVisitDataFrame.createOrReplaceTempView("age_of_last_visit");
-
-        // Latest adherence
-        String latestAdherenceQuery = loadFactLatestObs.loadQuery("LatestAdherence.sql");
-        Dataset<Row> latestAdherenceDataFrame = session.read()
-                .format("jdbc")
-                .option("url", rtConfig.get("spark.ods.url"))
-                .option("driver", rtConfig.get("spark.ods.driver"))
-                .option("user", rtConfig.get("spark.ods.user"))
-                .option("password", rtConfig.get("spark.ods.password"))
-                .option("query", latestAdherenceQuery)
-                .load();
-        latestAdherenceDataFrame.persist(StorageLevel.DISK_ONLY());
-        latestAdherenceDataFrame.createOrReplaceTempView("latest_adherence");
-
-        // Latest differentiated care
-        String latestDifferentiatedCareQuery = loadFactLatestObs.loadQuery("LatestDifferentiatedCare.sql");
-        Dataset<Row> latestDifferentiatedCareDataFrame = session.read()
-                .format("jdbc")
-                .option("url", rtConfig.get("spark.ods.url"))
-                .option("driver", rtConfig.get("spark.ods.driver"))
-                .option("user", rtConfig.get("spark.ods.user"))
-                .option("password", rtConfig.get("spark.ods.password"))
-                .option("query", latestDifferentiatedCareQuery)
-                .load();
-        latestDifferentiatedCareDataFrame.persist(StorageLevel.DISK_ONLY());
-        latestDifferentiatedCareDataFrame.createOrReplaceTempView("latest_differentiated_care");
-
-        // latest mmd
-        String latestMMDQuery = loadFactLatestObs.loadQuery("LatestMmd.sql");
-        Dataset<Row> latestMmdDataFrame = session.read()
-                .format("jdbc")
-                .option("url", rtConfig.get("spark.ods.url"))
-                .option("driver", rtConfig.get("spark.ods.driver"))
-                .option("user", rtConfig.get("spark.ods.user"))
-                .option("password", rtConfig.get("spark.ods.password"))
-                .option("query", latestMMDQuery)
-                .load();
-        latestMmdDataFrame.persist(StorageLevel.DISK_ONLY());
-        latestMmdDataFrame.createOrReplaceTempView("latest_mmd");
-
-        // latest stability assessment
-        String latestStabilityAssessmentQuery = loadFactLatestObs.loadQuery("LatestStabilityAssessment.sql");
-        Dataset<Row> latestStabilityAssessmentDataFrame = session.read()
-                .format("jdbc")
-                .option("url", rtConfig.get("spark.ods.url"))
-                .option("driver", rtConfig.get("spark.ods.driver"))
-                .option("user", rtConfig.get("spark.ods.user"))
-                .option("password", rtConfig.get("spark.ods.password"))
-                .option("query", latestStabilityAssessmentQuery)
-                .load();
-        latestStabilityAssessmentDataFrame.persist(StorageLevel.DISK_ONLY());
-        latestStabilityAssessmentDataFrame.createOrReplaceTempView("lastest_stability_assessment");
-
-        // latest pregnancy
-        String latestPregnancyQuery = loadFactLatestObs.loadQuery("LatestPregnancy.sql");
-        Dataset<Row> latestPregnancyDataFrame = session.read()
-                .format("jdbc")
-                .option("url", rtConfig.get("spark.ods.url"))
-                .option("driver", rtConfig.get("spark.ods.driver"))
-                .option("user", rtConfig.get("spark.ods.user"))
-                .option("password", rtConfig.get("spark.ods.password"))
-                .option("query", latestPregnancyQuery)
-                .load();
-        latestPregnancyDataFrame.persist(StorageLevel.DISK_ONLY());
-        latestPregnancyDataFrame.createOrReplaceTempView("latest_pregnancy");
-
-        // latest fp method
-        String latestFPMethodQuery = loadFactLatestObs.loadQuery("LatestFPMethod.sql");
-        Dataset<Row> latestFPMethodDataFrame = session.read()
-                .format("jdbc")
-                .option("url", rtConfig.get("spark.ods.url"))
-                .option("driver", rtConfig.get("spark.ods.driver"))
-                .option("user", rtConfig.get("spark.ods.user"))
-                .option("password", rtConfig.get("spark.ods.password"))
-                .option("query", latestFPMethodQuery)
-                .load();
-        latestFPMethodDataFrame.persist(StorageLevel.DISK_ONLY());
-        latestFPMethodDataFrame.createOrReplaceTempView("latest_fp_method");
-
-        // patient
-        Dataset<Row> patientDataFrame = session.read()
-                .format("jdbc")
-                .option("url", rtConfig.get("spark.ods.url"))
-                .option("driver", rtConfig.get("spark.ods.driver"))
-                .option("user", rtConfig.get("spark.ods.user"))
-                .option("password", rtConfig.get("spark.ods.password"))
-                .option("dbtable", "dbo.CT_Patient")
-                .load();
-        patientDataFrame.persist(StorageLevel.DISK_ONLY());
-        patientDataFrame.createOrReplaceTempView("patient");
-
-        // combined table
-        String combinedTableQuery = loadFactLatestObs.loadQuery("CombinedTable.sql");
-        session.sql(combinedTableQuery).createOrReplaceTempView("combined_table");
 
         Dataset<Row> dimPatientDataFrame = session.read()
                 .format("jdbc")
@@ -161,7 +53,7 @@ public class LoadFactLatestObs {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimPatient.dbtable"))
+                .option("dbtable", "dbo.DimPatient")
                 .load();
         dimPatientDataFrame.persist(StorageLevel.DISK_ONLY());
         dimPatientDataFrame.createOrReplaceTempView("DimPatient");
@@ -172,7 +64,7 @@ public class LoadFactLatestObs {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimFacility.dbtable"))
+                .option("dbtable", "dbo.DimFacility")
                 .load();
         dimFacilityDataFrame.persist(StorageLevel.DISK_ONLY());
         dimFacilityDataFrame.createOrReplaceTempView("Dimfacility");
@@ -183,7 +75,7 @@ public class LoadFactLatestObs {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimPartner.dbtable"))
+                .option("dbtable", "dbo.DimPartner")
                 .load();
         dimPartnerDataFrame.persist(StorageLevel.DISK_ONLY());
         dimPartnerDataFrame.createOrReplaceTempView("DimPartner");
@@ -194,7 +86,7 @@ public class LoadFactLatestObs {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimAgency.dbtable"))
+                .option("dbtable", "dbo.DimAgency")
                 .load();
         dimAgencyDataFrame.persist(StorageLevel.DISK_ONLY());
         dimAgencyDataFrame.createOrReplaceTempView("DimAgency");
@@ -205,7 +97,7 @@ public class LoadFactLatestObs {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimAgeGroup.dbtable"))
+                .option("dbtable", "dbo.DimAgeGroup")
                 .load();
         dimAgeGroupDataFrame.persist(StorageLevel.DISK_ONLY());
         dimAgeGroupDataFrame.createOrReplaceTempView("DimAgeGroup");
@@ -216,7 +108,7 @@ public class LoadFactLatestObs {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimDifferentiatedCare.dbtable"))
+                .option("dbtable", "dbo.DimDifferentiatedCare")
                 .load();
         dimDifferentiatedCareDataFrame.persist(StorageLevel.DISK_ONLY());
         dimDifferentiatedCareDataFrame.createOrReplaceTempView("DimDifferentiatedCare");
@@ -224,7 +116,7 @@ public class LoadFactLatestObs {
         // latest Obs df
         String latestObsQuery = loadFactLatestObs.loadQuery("FactLatestObs.sql");
         Dataset<Row> latestObsDf = session.sql(latestObsQuery);
-        latestObsDf = latestObsDf.withColumn("Factkey", monotonically_increasing_id().plus(5));
+        latestObsDf = latestObsDf.withColumn("Factkey", monotonically_increasing_id().plus(1));
 
         latestObsDf.printSchema();
         final int writePartitions = 20;
@@ -236,7 +128,7 @@ public class LoadFactLatestObs {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.factLatestObs.dbtable"))
+                .option("dbtable", "dbo.FactLatestObs")
                 .mode(SaveMode.Overwrite)
                 .save();
     }

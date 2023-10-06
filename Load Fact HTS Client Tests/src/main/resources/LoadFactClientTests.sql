@@ -35,13 +35,13 @@ select
         when (hts_encounter.MonthsSinceLastTest >= 24 and hts_encounter.MonthsSinceLastTest < 36) then '24-36 Months'
         when (hts_encounter.MonthsSinceLastTest >= 36 and (hts_encounter.MonthsSinceLastTest < 48)) then '36-48 Months'
         when (hts_encounter.MonthsSinceLastTest >= 48 and hts_encounter.MonthsSinceLastTest is not null) then '>48Months'
-end as MonthsLastTest,
+        end as MonthsLastTest,
     case
         when (hts_encounter.EverTestedForHiv = 'Yes' and hts_encounter.MonthsSinceLastTest < 12) then 'Retest'
-    else 'New' end as TestedBefore,
+        else 'New' end as TestedBefore,
     hts_encounter.Setting,
     current_date ()  as LoadDate
-from  hts_encounter
+from hts_encounter
 left join DimPatient as patient on patient.PatientPKHash = hts_encounter.PatientPKHash
 left join DimFacility as facility on facility.MFLCode = hts_encounter.SiteCode
 left join MFL_partner_agency_combination on MFL_partner_agency_combination.MFL_Code = hts_encounter.SiteCode

@@ -8,7 +8,8 @@ select
     TestResult1,
     kit_name2.TestKitNameKey as TestKitName2Key,
     TestKitLotNumber2,
-    TestResult2
+    TestResult2,
+    current_date() as LoadDate
 from source_data
     left join DimPatient as patient on patient.PatientPKHash =  source_data.PatientPKHash
     and patient.SiteCode = source_data.SiteCode

@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
+import static org.apache.spark.sql.functions.monotonically_increasing_id;
+
 public class LoadFactOvc {
     private static final Logger logger = LoggerFactory.getLogger(LoadFactOvc.class);
     public static void main(String[] args) {
@@ -55,7 +57,7 @@ public class LoadFactOvc {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimDate.dbtable"))
+                .option("dbtable", "NDWH.dbo.DimDate")
                 .load();
         dimDateDataFrame.persist(StorageLevel.DISK_ONLY());
         dimDateDataFrame.createOrReplaceTempView("DimDate");
@@ -66,7 +68,7 @@ public class LoadFactOvc {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimFacility.dbtable"))
+                .option("dbtable", "dbo.DimFacility")
                 .load();
         dimFacilityDataFrame.persist(StorageLevel.DISK_ONLY());
         dimFacilityDataFrame.createOrReplaceTempView("Dimfacility");
@@ -77,7 +79,7 @@ public class LoadFactOvc {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimPatient.dbtable"))
+                .option("dbtable", "dbo.DimPatient")
                 .load();
         dimPatientDataFrame.persist(StorageLevel.DISK_ONLY());
         dimPatientDataFrame.createOrReplaceTempView("DimPatient");
@@ -88,7 +90,7 @@ public class LoadFactOvc {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimPartner.dbtable"))
+                .option("dbtable", "dbo.DimPartner")
                 .load();
         dimPartnerDataFrame.persist(StorageLevel.DISK_ONLY());
         dimPartnerDataFrame.createOrReplaceTempView("DimPartner");
@@ -99,7 +101,7 @@ public class LoadFactOvc {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimAgency.dbtable"))
+                .option("dbtable", "dbo.DimAgency")
                 .load();
         dimAgencyDataFrame.persist(StorageLevel.DISK_ONLY());
         dimAgencyDataFrame.createOrReplaceTempView("DimAgency");
@@ -110,7 +112,7 @@ public class LoadFactOvc {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimAgeGroup.dbtable"))
+                .option("dbtable", "dbo.DimAgeGroup")
                 .load();
         dimAgeGroupDataFrame.persist(StorageLevel.DISK_ONLY());
         dimAgeGroupDataFrame.createOrReplaceTempView("DimAgeGroup");
@@ -121,13 +123,14 @@ public class LoadFactOvc {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimRelationshipWithPatient.dbtable"))
+                .option("dbtable", "dbo.DimRelationshipWithPatient")
                 .load();
         dimRelationshipWithPatientDataFrame.persist(StorageLevel.DISK_ONLY());
         dimRelationshipWithPatientDataFrame.createOrReplaceTempView("DimRelationshipWithPatient");
 
         String factOvcQuery = loadFactOvc.loadQuery("LoadFactOvc.sql");
         Dataset<Row> factOvcDf = session.sql(factOvcQuery);
+        factOvcDf = factOvcDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
         factOvcDf.printSchema();
         final int writePartitions = 20;
         factOvcDf
@@ -138,7 +141,7 @@ public class LoadFactOvc {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.factOvc.dbtable"))
+                .option("dbtable", "dbo.FactOVC")
                 .option("truncate", "true")
                 .mode(SaveMode.Overwrite)
                 .save();

@@ -2,9 +2,13 @@ package org.kenyahmis.loaddrugdimension;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.*;
+import org.apache.spark.sql.expressions.Window;
+import org.apache.spark.sql.expressions.WindowSpec;
 import org.apache.spark.storage.StorageLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.spark.sql.functions.row_number;
 
 public class LoadDrugDimension {
     private static final Logger logger = LoggerFactory.getLogger(LoadDrugDimension.class);
@@ -35,6 +39,8 @@ public class LoadDrugDimension {
         dimDrugDataFrame.createOrReplaceTempView("source_drug");
         Dataset<Row> dimDrugFinalDf = session
                 .sql("select source_drug.*,current_date() as LoadDate from source_drug");
+        WindowSpec window = Window.orderBy("Drug");
+        dimDrugFinalDf = dimDrugFinalDf.withColumn("DrugKey",  row_number().over(window));
 
         dimDrugFinalDf.printSchema();
         final int writePartitions = 20;
@@ -46,7 +52,7 @@ public class LoadDrugDimension {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimDrug.dbtable"))
+                .option("dbtable", "dbo.DimDrug")
                 .option("truncate", "true")
                 .mode(SaveMode.Overwrite)
                 .save();
