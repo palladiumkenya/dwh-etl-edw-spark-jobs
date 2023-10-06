@@ -50,7 +50,7 @@ public class LoadDateDimension {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimDate.dbtable"))
+                .option("dbtable", "dbo.DimDate")
                 .option("truncate", "true")
                 .mode(SaveMode.Overwrite)
                 .save();
