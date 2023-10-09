@@ -98,14 +98,14 @@ public class LoadDimPatients {
         logger.info("Writing final Dimpatient DF");
         dimPatients.printSchema();
         dimPatients
-                .repartition(Integer.parseInt(rtConfig.get("spark.default.numpartitions")))
+                .repartition(50)
                 .write()
                 .format("jdbc")
                 .option("url", rtConfig.get("spark.edw.url"))
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimPatient.dbtable"))
+                .option("dbtable", "dbo.DimPatient")
                 .mode(SaveMode.Overwrite)
                 .save();
     }
