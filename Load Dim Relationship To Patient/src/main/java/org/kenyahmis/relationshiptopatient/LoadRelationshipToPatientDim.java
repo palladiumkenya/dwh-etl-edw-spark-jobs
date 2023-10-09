@@ -2,6 +2,9 @@ package org.kenyahmis.relationshiptopatient;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.*;
+import org.apache.spark.sql.expressions.WindowSpec;
+
+import static org.apache.spark.sql.functions.row_number;
 
 public class LoadRelationshipToPatientDim {
     public static void main(String[] args) {
@@ -26,7 +29,9 @@ public class LoadRelationshipToPatientDim {
 
         sourceRelationshipsDataframe.createOrReplaceTempView("source_relationship");
         Dataset<Row> dimRelationshipDf = session.sql("SELECT source_relationship.*,current_date() as LoadDate" +
-                " FROM source_relationship");
+                " FROM source_relationship where RelationshipWithPatient is not null and RelationshipWithPatient <> ''");
+        WindowSpec window = Window.orderBy("RelationshipWithPatient");
+        dimRelationshipDf = dimRelationshipDf.withColumn("RelationshipWithPatientKey",  row_number().over(window));
 
         dimRelationshipDf.printSchema();
         dimRelationshipDf.show();
@@ -36,7 +41,7 @@ public class LoadRelationshipToPatientDim {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimRelationshipWithPatient.dbtable"))
+                .option("dbtable", "dbo.DimRelationshipWithPatient")
                 .option("truncate", "true")
                 .mode(SaveMode.Overwrite)
                 .save();
