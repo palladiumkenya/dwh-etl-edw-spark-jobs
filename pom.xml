@@ -32,7 +32,7 @@
         <module>Load Fact HTS Client Tracing</module>
         <module>Load Fact HTS Partner Tracing</module>
         <module>Load Fact HTS Test Kits</module>
-        <module>Load Fact Prep</module>
+        <module>Load Fact Prep Visits</module>
         <module>Load Fact OTZ</module>
         <module>Load Fact OVC</module>
         <module>Load Fact Latest Obs</module>
@@ -48,6 +48,9 @@
         <module>Load Fact Viral Load</module>
         <module>Load Dim Vaccination Status</module>
         <module>Load Dim Family Planning</module>
+        <module>Load Fact PREP Discontinuation</module>
+        <module>Load Fact PREP Refills</module>
+        <module>Load Fact PREP Assessments</module>
     </modules>
 
     <dependencyManagement>

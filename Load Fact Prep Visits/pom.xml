@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>load-fact-prep</artifactId>
+    <artifactId>load-fact-prep-visits</artifactId>
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-core -->
@@ -47,7 +47,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>org.kenyahmis.factprep.LoadFactPrep</mainClass>
+                            <mainClass>org.kenyahmis.factprep.LoadFactPrepVisits</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
