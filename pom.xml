@@ -46,6 +46,8 @@
         <module>Load Fact Manifest</module>
         <module>Load Fact TPT</module>
         <module>Load Fact Viral Load</module>
+        <module>Load Dim Vaccination Status</module>
+        <module>Load Dim Family Planning</module>
     </modules>
 
     <dependencyManagement>
