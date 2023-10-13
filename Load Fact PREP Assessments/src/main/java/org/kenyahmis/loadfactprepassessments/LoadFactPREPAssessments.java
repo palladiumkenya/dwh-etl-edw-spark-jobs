@@ -17,28 +17,12 @@ public class LoadFactPREPAssessments {
     public static void main(String[] args) {
         SparkConf conf = new SparkConf();
         conf.setAppName("Load PREP Assessment Fact");
-        conf.setMaster("local[*]");
 
         SparkSession session = SparkSession.builder()
                 .config(conf)
                 .getOrCreate();
 
         RuntimeConfig rtConfig = session.conf();
-        rtConfig.set("spark.dwapicentral.url", "jdbc:sqlserver://10.230.50.66;encrypt=false;databaseName=DWAPICentral");
-        rtConfig.set("spark.dwapicentral.driver", "com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        rtConfig.set("spark.dwapicentral.user", "dwh");
-        rtConfig.set("spark.dwapicentral.password", "c0nstella");
-        rtConfig.set("spark.dwapicentral.numpartitions", "50");
-        rtConfig.set("spark.edw.url", "jdbc:sqlserver://10.230.50.66;encrypt=false;databaseName=DataExchange");
-        rtConfig.set("spark.edw.driver", "com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        rtConfig.set("spark.edw.user", "dwh");
-        rtConfig.set("spark.edw.password", "c0nstella");
-        rtConfig.set("spark.edw.numpartitions", "50");
-        rtConfig.set("spark.ods.url", "jdbc:sqlserver://10.230.50.66;encrypt=false;databaseName=ODS");
-        rtConfig.set("spark.ods.driver", "com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        rtConfig.set("spark.ods.user", "dwh");
-        rtConfig.set("spark.ods.password", "c0nstella");
-        rtConfig.set("spark.ods.numpartitions", "50");
 
 
         LoadFactPREPAssessments loadPREPDiscontinuations = new LoadFactPREPAssessments();
