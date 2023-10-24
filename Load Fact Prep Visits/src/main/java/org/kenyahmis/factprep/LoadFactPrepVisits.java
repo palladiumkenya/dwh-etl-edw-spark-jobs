@@ -15,8 +15,8 @@ import java.nio.charset.Charset;
 
 import static org.apache.spark.sql.functions.row_number;
 
-public class LoadFactPrep {
-    private static final Logger logger = LoggerFactory.getLogger(LoadFactPrep.class);
+public class LoadFactPrepVisits {
+    private static final Logger logger = LoggerFactory.getLogger(LoadFactPrepVisits.class);
     public static void main(String[] args) {
 
         SparkConf conf = new SparkConf();
@@ -25,7 +25,7 @@ public class LoadFactPrep {
                 .config(conf)
                 .getOrCreate();
         RuntimeConfig rtConfig = session.conf();
-        LoadFactPrep loadFactPrep = new LoadFactPrep();
+        LoadFactPrepVisits loadFactPrep = new LoadFactPrepVisits();
 
         Dataset<Row> dimMFLPartnerAgencyCombinationDataFrame = session.read()
                 .format("jdbc")
@@ -46,82 +46,77 @@ public class LoadFactPrep {
                 .option("user", rtConfig.get("spark.ods.user"))
                 .option("password", rtConfig.get("spark.ods.password"))
                 .option("query", " select\n" +
-                        "            distinct PatientPKHash,\n" +
+                        "            distinct PatientPKHash PatientPK,\n" +
                         "            SiteCode\n" +
-                        "        from dbo.PrEP_Patient")
+                        "        from dbo.PrEP_Patient " +
+                        "where PrepNumber is not null")
                 .load();
 
         prepPatientDataDf.createOrReplaceTempView("prep_patients");
         prepPatientDataDf.persist(StorageLevel.DISK_ONLY());
 
-        // Exit ordering
-        Dataset<Row> exitOrderingDataDf = session.read()
+        // Prep Visits
+        Dataset<Row> prepVisitsDataDf = session.read()
                 .format("jdbc")
                 .option("url", rtConfig.get("spark.ods.url"))
                 .option("driver", rtConfig.get("spark.ods.driver"))
                 .option("user", rtConfig.get("spark.ods.user"))
                 .option("password", rtConfig.get("spark.ods.password"))
-                .option("query", "select  \n" +
-                        "            row_number () over (partition by PrepNumber, PatientPKHash,SiteCode order by ExitDate desc) as num,\n" +
-                        "            PatientPKHash,\n" +
+                .option("query", "select\n" +
+                        "            PatientPKHash PatientPK,\n" +
                         "            SiteCode,\n" +
-                        "            StatusDate,\n" +
-                        "            ExitDate,\n" +
-                        "            ExitReason,\n" +
-                        "            DateOfLastPrepDose\n" +
-                        "        from dbo.PrEP_CareTermination")
+                        "            VisitID,\n" +
+                        "            VisitDate,\n" +
+                        "            BloodPressure,\n" +
+                        "            Temperature,\n" +
+                        "            Weight,\n" +
+                        "            Height,\n" +
+                        "            BMI,\n" +
+                        "            STIScreening,\n" +
+                        "            STISymptoms,\n" +
+                        "            STITreated,\n" +
+                        "            Circumcised,\n" +
+                        "            VMMCReferral,\n" +
+                        "            cast(LMP as Date) as LMP,\n" +
+                        "            MenopausalStatus,\n" +
+                        "            PregnantAtThisVisit,\n" +
+                        "            cast(EDD as Date) as EDD,\n" +
+                        "            PlanningToGetPregnant,\n" +
+                        "            PregnancyPlanned,\n" +
+                        "            PregnancyEnded,\n" +
+                        "            cast(PregnancyEndDate as Date) as PregnancyEndDate,\n" +
+                        "            PregnancyOutcome,\n" +
+                        "            BirthDefects,\n" +
+                        "            Breastfeeding,\n" +
+                        "            FamilyPlanningStatus,\n" +
+                        "            FPMethods,\n" +
+                        "            AdherenceDone,\n" +
+                        "            AdherenceOutcome,\n" +
+                        "            AdherenceReasons,\n" +
+                        "            SymptomsAcuteHIV,\n" +
+                        "            ContraindicationsPrep,\n" +
+                        "            PrepTreatmentPlan,\n" +
+                        "            PrepPrescribed,\n" +
+                        "            RegimenPrescribed,\n" +
+                        "            MonthsPrescribed,\n" +
+                        "            CondomsIssued,\n" +
+                        "            Tobegivennextappointment,\n" +
+                        "            Reasonfornotgivingnextappointment,\n" +
+                        "            HepatitisBPositiveResult,\n" +
+                        "            HepatitisCPositiveResult,\n" +
+                        "            VaccinationForHepBStarted,\n" +
+                        "            TreatedForHepB,\n" +
+                        "            VaccinationForHepCStarted,\n" +
+                        "            TreatedForHepC,\n" +
+                        "            cast(NextAppointment as Date) NextAppointment,\n" +
+                        "            ClinicalNotes\n" +
+                        "        from dbo.PrEP_Visits\n" +
+                        "        where VisitDate is not null")
                 .load();
 
-        exitOrderingDataDf.createOrReplaceTempView("exits_ordering");
-        exitOrderingDataDf.persist(StorageLevel.DISK_ONLY());
+        prepVisitsDataDf.createOrReplaceTempView("PrepVisits");
+        prepVisitsDataDf.persist(StorageLevel.DISK_ONLY());
 
-        // Latest exits
-        Dataset<Row> latestExitsDataDf = session.sql(" select \n" +
-                "            *\n" +
-                "        from exits_ordering\n" +
-                "        where num = 1");
-
-        latestExitsDataDf.createOrReplaceTempView("latest_exits");
-        latestExitsDataDf.persist(StorageLevel.DISK_ONLY());
-
-        // Latest prep assessment
-        Dataset<Row> latestPrepAssessmentDataDf = session.read()
-                .format("jdbc")
-                .option("url", rtConfig.get("spark.ods.url"))
-                .option("driver", rtConfig.get("spark.ods.driver"))
-                .option("user", rtConfig.get("spark.ods.user"))
-                .option("password", rtConfig.get("spark.ods.password"))
-                .option("query", "select * from Intermediate_LastestPrepAssessments")
-                .load();
-
-        latestPrepAssessmentDataDf.createOrReplaceTempView("latest_prep_assessments");
-        latestPrepAssessmentDataDf.persist(StorageLevel.DISK_ONLY());
-
-        //  prep last visit
-        Dataset<Row> prepLastVisitDataDf = session.read()
-                .format("jdbc")
-                .option("url", rtConfig.get("spark.ods.url"))
-                .option("driver", rtConfig.get("spark.ods.driver"))
-                .option("user", rtConfig.get("spark.ods.user"))
-                .option("password", rtConfig.get("spark.ods.password"))
-                .option("dbtable", "dbo.Intermediate_PrepLastVisit")
-                .load();
-
-        prepLastVisitDataDf.createOrReplaceTempView("Intermediate_PrepLastVisit");
-        prepLastVisitDataDf.persist(StorageLevel.DISK_ONLY());
-
-        //  prep refills
-        Dataset<Row> prepRefillsDataDf = session.read()
-                .format("jdbc")
-                .option("url", rtConfig.get("spark.ods.url"))
-                .option("driver", rtConfig.get("spark.ods.driver"))
-                .option("user", rtConfig.get("spark.ods.user"))
-                .option("password", rtConfig.get("spark.ods.password"))
-                .option("dbtable", "dbo.Intermediate_PrepRefills")
-                .load();
-
-        prepRefillsDataDf.createOrReplaceTempView("Intermediate_PrepRefills");
-        prepRefillsDataDf.persist(StorageLevel.DISK_ONLY());
 
         Dataset<Row> dimDateDataFrame = session.read()
                 .format("jdbc")
@@ -129,7 +124,7 @@ public class LoadFactPrep {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimDate.dbtable"))
+                .option("dbtable", "dbo.DimDate")
                 .load();
         dimDateDataFrame.persist(StorageLevel.DISK_ONLY());
         dimDateDataFrame.createOrReplaceTempView("DimDate");
@@ -140,7 +135,7 @@ public class LoadFactPrep {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimFacility.dbtable"))
+                .option("dbtable", "dbo.DimFacility")
                 .load();
         dimFacilityDataFrame.persist(StorageLevel.DISK_ONLY());
         dimFacilityDataFrame.createOrReplaceTempView("Dimfacility");
@@ -151,7 +146,7 @@ public class LoadFactPrep {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimPatient.dbtable"))
+                .option("dbtable", "dbo.DimPatient")
                 .load();
         dimPatientDataFrame.persist(StorageLevel.DISK_ONLY());
         dimPatientDataFrame.createOrReplaceTempView("DimPatient");
@@ -162,7 +157,7 @@ public class LoadFactPrep {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimPartner.dbtable"))
+                .option("dbtable", "dbo.DimPartner")
                 .load();
         dimPartnerDataFrame.persist(StorageLevel.DISK_ONLY());
         dimPartnerDataFrame.createOrReplaceTempView("DimPartner");
@@ -173,7 +168,7 @@ public class LoadFactPrep {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimAgency.dbtable"))
+                .option("dbtable", "dbo.DimAgency")
                 .load();
         dimAgencyDataFrame.persist(StorageLevel.DISK_ONLY());
         dimAgencyDataFrame.createOrReplaceTempView("DimAgency");
@@ -198,22 +193,22 @@ public class LoadFactPrep {
         factPrepDf = factPrepDf.withColumn("FactKey",  row_number().over(window));
         factPrepDf.printSchema();
         factPrepDf
-                .repartition(Integer.parseInt(rtConfig.get("spark.default.numpartitions")))
+                .repartition(50)
                 .write()
                 .format("jdbc")
                 .option("url", rtConfig.get("spark.edw.url"))
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", "dbo.FactPrep")
+                .option("dbtable", "dbo.FactPrepVisits")
                 .mode(SaveMode.Overwrite)
                 .save();
-        // TODO Create primary key
+
     }
 
     private String loadQuery(String fileName) {
         String query;
-        InputStream inputStream = LoadFactPrep.class.getClassLoader().getResourceAsStream(fileName);
+        InputStream inputStream = LoadFactPrepVisits.class.getClassLoader().getResourceAsStream(fileName);
         if (inputStream == null) {
             logger.error(fileName + " not found");
             throw new RuntimeException(fileName + " not found");
