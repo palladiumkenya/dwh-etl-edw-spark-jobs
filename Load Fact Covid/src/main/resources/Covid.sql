@@ -1,42 +1,51 @@
-SELECT ROW_NUMBER()OVER(PARTITION BY Covid.PatientIDHash,Covid.PatientPKHash,Covid.SiteCode ORDER BY Covid19AssessmentDate Desc)AS RowNumber,
-       Covid.PatientIDHash  ,
-       Covid.PatientPKHash ,
-       Covid.SiteCode,
-       Covid.FacilityName,
-       VisitID,
-       Max (Covid19AssessmentDate)Covid19AssessmentDate ,
-       ReceivedCOVID19Vaccine ,
-       DateGivenFirstDose ,
-       FirstDoseVaccineAdministered,
-       DateGivenSecondDose,
-       SecondDoseVaccineAdministered ,
-       VaccinationStatus ,
-       VaccineVerification ,
-       BoosterGiven ,
-       BoosterDose ,
-       BoosterDoseDate ,
-       EverCOVID19Positive ,
-       COVID19TestDate,
-       PatientStatus ,
-       AdmissionStatus ,
-       AdmissionUnit ,
-       MissedAppointmentDueToCOVID19 ,
-       COVID19PositiveSinceLasVisit ,
-       COVID19TestDateSinceLastVisit ,
-       PatientStatusSinceLastVisit,
-       AdmissionStatusSinceLastVisit,
-       AdmissionStartDate,
-       AdmissionEndDate,
-       AdmissionUnitSinceLastVisit,
-       SupplementalOxygenReceived,
-       PatientVentilated,
-       TracingFinalOutcome ,
-       CauseOfDeath,
-       datediff(yy, patient.DOB, last_encounter.LastEncounterDate) as AgeLastVisit
-from ODS.dbo.CT_Covid as Covid
-         left join ODS.dbo.CT_Patient as patient on patient.PatientPKHash = Covid.PatientPKHash and patient.SiteCode = Covid.SiteCode
-         left join ODS.dbo.Intermediate_LastPatientEncounter as last_encounter on last_encounter.PatientPKHash = Covid.PatientPKHash and last_encounter.SiteCode = Covid.SiteCode
-group by
+SELECT
+    ROW_NUMBER () OVER (
+        PARTITION BY Covid.PatientPKHash,
+        Covid.SiteCode
+        ORDER BY
+            Covid19AssessmentDate DESC
+        ) AS RowNumber,
+    Covid.PatientIDHash,
+    Covid.PatientPKHash,
+    Covid.SiteCode,
+    Covid.FacilityName,
+    VisitID,
+    MAX(Covid19AssessmentDate) AS Covid19AssessmentDate,
+    ReceivedCOVID19Vaccine,
+    DateGivenFirstDose,
+    FirstDoseVaccineAdministered,
+    DateGivenSecondDose,
+    SecondDoseVaccineAdministered,
+    CASE WHEN VaccinationStatus IS NULL
+        OR VaccinationStatus = '' THEN 'Not Accessed' ELSE VaccinationStatus END AS VaccinationStatus,
+    VaccineVerification,
+    BoosterGiven,
+    BoosterDose,
+    BoosterDoseDate,
+    EverCOVID19Positive,
+    COVID19TestDate,
+    PatientStatus,
+    AdmissionStatus,
+    AdmissionUnit,
+    MissedAppointmentDueToCOVID19,
+    COVID19PositiveSinceLasVisit,
+    COVID19TestDateSinceLastVisit,
+    PatientStatusSinceLastVisit,
+    AdmissionStatusSinceLastVisit,
+    AdmissionStartDate,
+    AdmissionEndDate,
+    AdmissionUnitSinceLastVisit,
+    SupplementalOxygenReceived,
+    PatientVentilated,
+    TracingFinalOutcome,
+    CauseOfDeath,
+    datediff(
+            yy, patient.DOB, last_encounter.LastEncounterDate
+        ) AS AgeLastVisit
+FROM ODS.dbo.CT_Covid AS Covid
+LEFT JOIN ODS.dbo.CT_Patient AS patient ON patient.PatientPKHash = Covid.PatientPKHash AND patient.SiteCode = Covid.SiteCode
+LEFT JOIN ODS.dbo.Intermediate_LastPatientEncounter AS last_encounter ON last_encounter.PatientPKHash = Covid.PatientPKHash AND last_encounter.SiteCode = Covid.SiteCode
+GROUP BY
     Covid.PatientIDHash,
     Covid.PatientPKHash,
     PatientStatus,
