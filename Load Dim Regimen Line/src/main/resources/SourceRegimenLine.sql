@@ -1,5 +1,5 @@
 SELECT
-    DISTINCT StartRegimenLine AS RegimenLine
+    DISTINCT LTRIM(RTRIM(StartRegimenLine)) AS RegimenLine
 FROM ODS.dbo.CT_ARTPatients
 UNION ALL
 SELECT

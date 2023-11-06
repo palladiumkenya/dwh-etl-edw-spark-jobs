@@ -64,7 +64,7 @@ public class LoadFactART {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimDate.dbtable"))
+                .option("dbtable", "dbo.DimDate")
                 .load();
         dimDateDataFrame.persist(StorageLevel.DISK_ONLY());
         dimDateDataFrame.createOrReplaceTempView("DimDate");
@@ -75,7 +75,7 @@ public class LoadFactART {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimFacility.dbtable"))
+                .option("dbtable", "dbo.DimFacility")
                 .load();
         dimFacilityDataFrame.persist(StorageLevel.DISK_ONLY());
         dimFacilityDataFrame.createOrReplaceTempView("Dimfacility");
@@ -86,7 +86,7 @@ public class LoadFactART {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimPatient.dbtable"))
+                .option("dbtable", "dbo.DimPatient")
                 .load();
         dimPatientDataFrame.persist(StorageLevel.DISK_ONLY());
         dimPatientDataFrame.createOrReplaceTempView("DimPatient");
@@ -97,7 +97,7 @@ public class LoadFactART {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimPartner.dbtable"))
+                .option("dbtable", "dbo.DimPartner")
                 .load();
         dimPartnerDataFrame.persist(StorageLevel.DISK_ONLY());
         dimPartnerDataFrame.createOrReplaceTempView("DimPartner");
@@ -108,7 +108,7 @@ public class LoadFactART {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimAgency.dbtable"))
+                .option("dbtable", "dbo.DimAgency")
                 .load();
         dimAgencyDataFrame.persist(StorageLevel.DISK_ONLY());
         dimAgencyDataFrame.createOrReplaceTempView("DimAgency");
@@ -119,7 +119,7 @@ public class LoadFactART {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimAgeGroup.dbtable"))
+                .option("dbtable", "dbo.DimAgeGroup")
                 .load();
         dimAgeGroupDataFrame.persist(StorageLevel.DISK_ONLY());
         dimAgeGroupDataFrame.createOrReplaceTempView("DimAgeGroup");
@@ -130,7 +130,7 @@ public class LoadFactART {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimRegimenLine.dbtable"))
+                .option("dbtable", "dbo.DimRegimenLine")
                 .load();
         dimRegimenLineDataFrame.persist(StorageLevel.DISK_ONLY());
         dimRegimenLineDataFrame.createOrReplaceTempView("DimRegimenLine");
@@ -152,14 +152,14 @@ public class LoadFactART {
                 .option("driver", rtConfig.get("spark.ods.driver"))
                 .option("user", rtConfig.get("spark.ods.user"))
                 .option("password", rtConfig.get("spark.ods.password"))
-                .option("dbtable", "dbo.Intermediate_ARTOutcomes ")
+                .option("dbtable", "dbo.Intermediate_ARTOutcomes")
                 .load();
         intermediateARTOutcomesDataFrame.persist(StorageLevel.DISK_ONLY());
         intermediateARTOutcomesDataFrame.createOrReplaceTempView("Intermediate_ARTOutcomes");
         String factArtQuery = loadFactART.loadQuery("LoadFactArt.sql");
 
         Dataset<Row> factArtDf = session.sql(factArtQuery);
-        factArtDf = factArtDf.withColumn("FactKey", monotonically_increasing_id().plus(5));
+        factArtDf = factArtDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
         factArtDf.printSchema();
         long factARTCount = factArtDf.count();
         logger.info("Fact ART Count is: " + factARTCount);
@@ -172,7 +172,7 @@ public class LoadFactART {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.factArt.dbtable"))
+                .option("dbtable", "dbo.FACTART")
                 .mode(SaveMode.Overwrite)
                 .save();
     }

@@ -1,5 +1,4 @@
 select
-    PatientPK,
     PatientPKHash,
     SiteCode,
     EncounterId,
@@ -56,5 +55,8 @@ select
     AssessmentOutcome,
     ForcedSex,
     ReceivedServices,
-    TypeGBV
-from ODS.dbo.HTS_EligibilityExtract
+    TypeGBV,
+    HIVRiskCategory,
+    HtsRiskScore,
+    ReasonRefferredForTesting
+from dbo.HTS_EligibilityExtract

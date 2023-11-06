@@ -54,9 +54,12 @@ public class LoadDifferentiatedCareDim {
         differentiatedCareDataframe.persist(StorageLevel.DISK_ONLY());
         differentiatedCareDataframe.createOrReplaceTempView("differentiated_care");
 
-
         WindowSpec window = Window.orderBy("DifferentiatedCare");
-        differentiatedCareDataframe = differentiatedCareDataframe.withColumn("DifferentiatedCareKey", row_number().over(window));
+        differentiatedCareDataframe = differentiatedCareDataframe.withColumn("DifferentiatedCareKey",  row_number().over(window));
+        differentiatedCareDataframe = differentiatedCareDataframe
+                .withColumn("DifferentiatedCare", upper(col("DifferentiatedCare")));
+        differentiatedCareDataframe = differentiatedCareDataframe
+                .withColumn("LoadDate", current_date());
 
         differentiatedCareDataframe.printSchema();
         final int writePartitions = 20;
@@ -68,7 +71,8 @@ public class LoadDifferentiatedCareDim {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimDifferentiatedCare.dbtable"))
+                .option("dbtable", "dbo.DimDifferentiatedCare")
+                .option("truncate", "true")
                 .mode(SaveMode.Overwrite)
                 .save();
 

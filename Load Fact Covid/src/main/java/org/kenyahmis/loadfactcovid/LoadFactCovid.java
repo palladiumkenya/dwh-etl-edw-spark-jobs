@@ -51,7 +51,7 @@ public class LoadFactCovid {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimPatient.dbtable"))
+                .option("dbtable", "dbo.DimPatient")
                 .load();
         dimPatientDataFrame.persist(StorageLevel.DISK_ONLY());
         dimPatientDataFrame.createOrReplaceTempView("DimPatient");
@@ -62,7 +62,7 @@ public class LoadFactCovid {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimFacility.dbtable"))
+                .option("dbtable", "dbo.DimFacility")
                 .load();
         dimFacilityDataFrame.persist(StorageLevel.DISK_ONLY());
         dimFacilityDataFrame.createOrReplaceTempView("Dimfacility");
@@ -73,7 +73,7 @@ public class LoadFactCovid {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimPartner.dbtable"))
+                .option("dbtable", "dbo.DimPartner")
                 .load();
         dimPartnerDataFrame.persist(StorageLevel.DISK_ONLY());
         dimPartnerDataFrame.createOrReplaceTempView("DimPartner");
@@ -84,7 +84,7 @@ public class LoadFactCovid {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimAgency.dbtable"))
+                .option("dbtable", "dbo.DimAgency")
                 .load();
         dimAgencyDataFrame.persist(StorageLevel.DISK_ONLY());
         dimAgencyDataFrame.createOrReplaceTempView("DimAgency");
@@ -95,7 +95,7 @@ public class LoadFactCovid {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimAgeGroup.dbtable"))
+                .option("dbtable", "dbo.DimAgeGroup")
                 .load();
         dimAgeGroupDataFrame.persist(StorageLevel.DISK_ONLY());
         dimAgeGroupDataFrame.createOrReplaceTempView("DimAgeGroup");
@@ -106,7 +106,7 @@ public class LoadFactCovid {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.dimDate.dbtable"))
+                .option("dbtable", "dbo.DimDate")
                 .load();
         dimDateDataFrame.persist(StorageLevel.DISK_ONLY());
         dimDateDataFrame.createOrReplaceTempView("DimDate");
@@ -123,9 +123,10 @@ public class LoadFactCovid {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", rtConfig.get("spark.factCovid.dbtable"))
+                .option("dbtable", "dbo.FactCovid")
                 .mode(SaveMode.Overwrite)
                 .save();
+        //TODO: ADD PRIMARY KEY
     }
 
     private String loadQuery(String fileName) {

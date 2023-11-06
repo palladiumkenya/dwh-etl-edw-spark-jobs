@@ -7,7 +7,7 @@ select
     ovc_enrollment.DateKey as OVCEnrollmentDateKey,
     relationship_client.RelationshipWithPatientKey,
     source_ovc.EnrolledinCPIMS,
-    CPIMSUniqueIdentifier,
+    CPIMSUniqueIdentifierHash,
     PartnerOfferingOVCServices,
     OVCExitReason,
     exit_date.DateKey as OVCExitDateKey,
@@ -23,3 +23,4 @@ from source_ovc
     left join DimAgency as agency on agency.AgencyName = MFL_partner_agency_combination.Agency
     left join DimAgeGroup as age_group on age_group.Age = source_ovc.AgeLastVisit
     left join DimRelationshipWithPatient as relationship_client on relationship_client.RelationshipWithPatient = source_ovc.RelationshipToClient
+where source_ovc.rank = 1

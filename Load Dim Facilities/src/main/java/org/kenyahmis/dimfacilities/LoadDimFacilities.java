@@ -18,8 +18,8 @@ public class LoadDimFacilities {
 
         RuntimeConfig rtConfig = session.conf();
 
-        final String sourceFacilitiesQuery = "select MFL_Code as MFLCode,[Facility_Name] as FacilityName,SubCounty,County,EMR," +
-                "Project,Longitude,Latitude from dbo.ALL_EMRSites";
+        final String sourceFacilitiesQuery = "select Distinct MFL_Code as MFLCode, [Facility_Name] as FacilityName,SubCounty,County,EMR," +
+                "Project,Longitude,Latitude, Implementation, SDP_Agency As Agency from dbo.ALL_EMRSites";
         Dataset<Row> sourceFacilitiesDataframe = session.read()
                 .format("jdbc")
                 .option("url", rtConfig.get("spark.ods.url"))
@@ -55,14 +55,17 @@ public class LoadDimFacilities {
                 .load();
         latestUploadDataframe.createOrReplaceTempView("latest_upload");
 
-        Dataset<Row> dimFacilityDf = session.sql("select \n" +
+        Dataset<Row> dimFacilityDf = session.sql("select " +
                 "source_facility.*,\n" +
                 "cast(date_format(site_abstraction.DateSiteAbstraction,'yyyyMMdd') as int) as DateSiteAbstractionKey,\n" +
                 "cast(date_format(latest_upload.LatestDateUploaded, 'yyyyMMdd') as int) as LatestDateUploadedKey,\n" +
-                "current_date() as LoadDate \n" +
+                "case when Implementation like '%CT%' then 1 else 0 end as isCT,\n" +
+                "case when Implementation like '%CT%' then 1 else 0 end as isPKV,\n" +
+                "case when Implementation like '%HTS%' then 1 else 0 end as isHTS,\n" +
+                "current_date() as LoadDate\n" +
                 "from source_facility\n" +
-                " left join site_abstraction on site_abstraction.SiteCode <=> source_facility.MFLCode\n" +
-                " left join latest_upload on latest_upload.SiteCode <=> source_facility.MFLCode");
+                " left join site_abstraction on site_abstraction.SiteCode = source_facility.MFLCode\n" +
+                " left join latest_upload on latest_upload.SiteCode = source_facility.MFLCode");
 
         WindowSpec window = Window.orderBy("MFLCode");
         dimFacilityDf = dimFacilityDf.withColumn("FacilityKey", row_number().over(window));
