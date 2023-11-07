@@ -1,4 +1,4 @@
-package org.example.loadfactpatientexits;
+package org.kenyahmis.loadfactpatientexits;
 import org.apache.commons.io.IOUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.*;

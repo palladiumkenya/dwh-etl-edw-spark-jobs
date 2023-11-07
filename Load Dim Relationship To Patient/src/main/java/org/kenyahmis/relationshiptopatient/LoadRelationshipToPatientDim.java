@@ -2,6 +2,7 @@ package org.kenyahmis.relationshiptopatient;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.*;
+import org.apache.spark.sql.expressions.Window;
 import org.apache.spark.sql.expressions.WindowSpec;
 
 import static org.apache.spark.sql.functions.row_number;
