@@ -31,11 +31,8 @@ public class LoadRelationshipToPatientDim {
         sourceRelationshipsDataframe.createOrReplaceTempView("source_relationship");
         Dataset<Row> dimRelationshipDf = session.sql("SELECT source_relationship.*,current_date() as LoadDate" +
                 " FROM source_relationship where RelationshipWithPatient is not null and RelationshipWithPatient <> ''");
-        WindowSpec window = Window.orderBy("RelationshipWithPatient");
-        dimRelationshipDf = dimRelationshipDf.withColumn("RelationshipWithPatientKey",  row_number().over(window));
 
         dimRelationshipDf.printSchema();
-        dimRelationshipDf.show();
         dimRelationshipDf.write()
                 .format("jdbc")
                 .option("url", rtConfig.get("spark.edw.url"))

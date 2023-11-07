@@ -30,8 +30,6 @@ public class LoadDimPartners {
         sourcePartnersDataframe.createOrReplaceTempView("source_partner");
         Dataset<Row> dimPartnerDf = session.sql("SELECT upper(PartnerName) AS PartnerName, current_date() AS LoadDate FROM source_partner");
 
-        WindowSpec window = Window.orderBy("PartnerName");
-        dimPartnerDf = dimPartnerDf.withColumn("PartnerKey",  row_number().over(window));
         dimPartnerDf.printSchema();
         dimPartnerDf.write()
                 .format("jdbc")

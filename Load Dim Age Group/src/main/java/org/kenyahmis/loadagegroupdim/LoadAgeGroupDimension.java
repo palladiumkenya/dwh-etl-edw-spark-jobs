@@ -44,8 +44,6 @@ public class LoadAgeGroupDimension {
         Dataset<Row> ageGroups =  session.sql(query);
         ageGroups = ageGroups.withColumn("LoadDate", lit(Date.valueOf(LocalDate.now())));
         // Add DimensionKey Column
-        WindowSpec window = Window.orderBy("Age");
-        ageGroups = ageGroups.withColumn("AgeGroupKey",  row_number().over(window));
         ageGroups.printSchema();
         ageGroups.write()
                 .format("jdbc")

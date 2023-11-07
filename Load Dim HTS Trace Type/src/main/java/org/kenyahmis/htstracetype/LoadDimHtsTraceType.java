@@ -42,8 +42,6 @@ public class LoadDimHtsTraceType {
                 "       current_date() as LoadDate\n" +
                 " from source_data");
 
-        WindowSpec window = Window.orderBy("TraceType");
-        dimTraceType = dimTraceType.withColumn("TraceTypeKey",  row_number().over(window));
         dimTraceType
                 .write()
                 .format("jdbc")

@@ -48,9 +48,6 @@ public class LoadDimArtOutcome {
                         .when(col("ARTOutcome").equalTo("uL"), "Undocumented Loss"))
                 .withColumn("LoadDate", lit(Date.valueOf(LocalDate.now())));
 
-        WindowSpec window = Window.orderBy("ARTOutcome");
-        outcomesDataframe = outcomesDataframe.withColumn("ARTOutcomeKey",  row_number().over(window));
-
         outcomesDataframe.printSchema();
         outcomesDataframe.write()
                 .format("jdbc")

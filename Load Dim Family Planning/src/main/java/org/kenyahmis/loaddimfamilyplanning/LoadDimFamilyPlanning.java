@@ -44,8 +44,6 @@ public class LoadDimFamilyPlanning {
         Dataset<Row> dimFamilyPlanning = session.sql("select source_FamilyPlanning.*, current_date() as LoadDate " +
                 "from source_FamilyPlanning");
 
-        WindowSpec window = Window.orderBy("FamilyPlanning");
-        dimFamilyPlanning = dimFamilyPlanning.withColumn("FamilyPlanningKey", row_number().over(window));
         dimFamilyPlanning
                 .write()
                 .format("jdbc")

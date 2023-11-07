@@ -45,8 +45,6 @@ public class LoadDimTreatmentType {
         Dataset<Row> dimTreatmentTypes = session.sql("select source_TreatmentType.*, current_date() as LoadDate " +
                 "from source_TreatmentType");
 
-        WindowSpec window = Window.orderBy("TreatmentType");
-        dimTreatmentTypes = dimTreatmentTypes.withColumn("TreatmentTypeKey",  row_number().over(window));
         dimTreatmentTypes
                 .write()
                 .format("jdbc")

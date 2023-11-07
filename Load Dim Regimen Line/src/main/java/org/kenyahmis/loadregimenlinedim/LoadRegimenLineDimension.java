@@ -72,8 +72,6 @@ public class LoadRegimenLineDimension {
 
         Dataset<Row> dimeRegimenLineDf = session.sql("SELECT enriched_source_regimen_line.*," +
                 "current_date() AS LoadDate FROM enriched_source_regimen_line");
-        WindowSpec window = Window.orderBy("RegimenLine");
-        dimeRegimenLineDf = dimeRegimenLineDf.withColumn("RegimenLineKey",  row_number().over(window));
 
         final int writePartitions = 20;
         dimeRegimenLineDf.printSchema();

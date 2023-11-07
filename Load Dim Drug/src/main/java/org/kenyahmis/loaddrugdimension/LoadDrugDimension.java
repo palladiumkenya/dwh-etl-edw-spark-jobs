@@ -39,8 +39,6 @@ public class LoadDrugDimension {
         dimDrugDataFrame.createOrReplaceTempView("source_drug");
         Dataset<Row> dimDrugFinalDf = session
                 .sql("select source_drug.*,current_date() as LoadDate from source_drug");
-        WindowSpec window = Window.orderBy("Drug");
-        dimDrugFinalDf = dimDrugFinalDf.withColumn("DrugKey",  row_number().over(window));
 
         dimDrugFinalDf.printSchema();
         final int writePartitions = 20;

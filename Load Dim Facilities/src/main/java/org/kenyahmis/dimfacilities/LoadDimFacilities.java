@@ -67,9 +67,6 @@ public class LoadDimFacilities {
                 " left join site_abstraction on site_abstraction.SiteCode = source_facility.MFLCode\n" +
                 " left join latest_upload on latest_upload.SiteCode = source_facility.MFLCode");
 
-        WindowSpec window = Window.orderBy("MFLCode");
-        dimFacilityDf = dimFacilityDf.withColumn("FacilityKey", row_number().over(window));
-
         dimFacilityDf.printSchema();
         dimFacilityDf.write()
                 .format("jdbc")

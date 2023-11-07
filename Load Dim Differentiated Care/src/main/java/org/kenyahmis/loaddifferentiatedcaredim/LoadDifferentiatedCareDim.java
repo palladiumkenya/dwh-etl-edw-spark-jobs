@@ -54,8 +54,6 @@ public class LoadDifferentiatedCareDim {
         differentiatedCareDataframe.persist(StorageLevel.DISK_ONLY());
         differentiatedCareDataframe.createOrReplaceTempView("differentiated_care");
 
-        WindowSpec window = Window.orderBy("DifferentiatedCare");
-        differentiatedCareDataframe = differentiatedCareDataframe.withColumn("DifferentiatedCareKey",  row_number().over(window));
         differentiatedCareDataframe = differentiatedCareDataframe
                 .withColumn("DifferentiatedCare", upper(col("DifferentiatedCare")));
         differentiatedCareDataframe = differentiatedCareDataframe

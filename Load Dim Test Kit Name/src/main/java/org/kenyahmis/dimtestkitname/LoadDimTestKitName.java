@@ -42,8 +42,6 @@ public class LoadDimTestKitName {
         // load dim patients
         Dataset<Row> dimTestKitNames = session.sql("select source_data.*,current_date() as LoadDate from source_data");
 
-        WindowSpec window = Window.orderBy("TestKitName");
-        dimTestKitNames = dimTestKitNames.withColumn("TestKitNameKey",  row_number().over(window));
         dimTestKitNames
                 .write()
                 .format("jdbc")

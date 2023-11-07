@@ -93,8 +93,6 @@ public class LoadDimPatients {
         String loadDimPatientsQuery = loadDimPatients.loadQuery("LoadDimPatients.sql");
         Dataset<Row> dimPatients = session.sql(loadDimPatientsQuery);
 
-        WindowSpec window = Window.orderBy("DOB");
-        dimPatients = dimPatients.withColumn("PatientKey",  row_number().over(window));
         logger.info("Writing final Dimpatient DF");
         dimPatients.printSchema();
         dimPatients

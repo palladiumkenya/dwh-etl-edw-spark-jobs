@@ -47,8 +47,6 @@ public class LoadDimHtsTraceOutcome {
                 "    current_date() as LoadDate\n" +
                 "from source_data");
 
-        WindowSpec window = Window.orderBy("TraceOutcome");
-        dimTraceOutcome = dimTraceOutcome.withColumn("TraceOutcomeKey",  row_number().over(window));
         dimTraceOutcome
                 .write()
                 .format("jdbc")

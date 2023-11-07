@@ -43,9 +43,6 @@ public class LoadDimVaccinationStatus {
         // load Vaccination status Dim
         Dataset<Row> dimVaccinationStatus = session.sql("select source_vaccination_status.*, current_date() as LoadDate " +
                 "from source_vaccination_status");
-
-        WindowSpec window = Window.orderBy("VaccinationStatus");
-        dimVaccinationStatus = dimVaccinationStatus.withColumn("VaccinationStatusKey",  row_number().over(window));
         dimVaccinationStatus
                 .write()
                 .format("jdbc")
