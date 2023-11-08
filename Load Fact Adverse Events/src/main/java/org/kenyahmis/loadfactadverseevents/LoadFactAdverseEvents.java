@@ -137,6 +137,7 @@ public class LoadFactAdverseEvents {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
+                .option("truncate", "true")
                 .option("dbtable", "dbo.FactAdverseEvents")
                 .mode(SaveMode.Overwrite)
                 .save();

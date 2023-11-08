@@ -49,6 +49,7 @@ public class LoadDimTestKitName {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
+                .option("truncate", "true")
                 .option("dbtable", "dbo.DimTestKitName")
                 .mode(SaveMode.Overwrite)
                 .save();
