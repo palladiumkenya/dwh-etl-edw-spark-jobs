@@ -130,7 +130,7 @@ public class LoadFactOvc {
 
         String factOvcQuery = loadFactOvc.loadQuery("LoadFactOvc.sql");
         Dataset<Row> factOvcDf = session.sql(factOvcQuery);
-        factOvcDf = factOvcDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
+//        factOvcDf = factOvcDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
         factOvcDf.printSchema();
         final int writePartitions = 20;
         factOvcDf

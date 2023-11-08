@@ -124,7 +124,7 @@ public class LoadARTHistoryFact {
             return;
         }
         Dataset<Row> artHistoryDf = session.sql(query);
-        artHistoryDf = artHistoryDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
+//        artHistoryDf = artHistoryDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
         artHistoryDf.printSchema();
         int numberOfPartitionsBeforeRepartition = artHistoryDf.rdd().getNumPartitions();
         logger.info("Number of partitions before repartition: "+ numberOfPartitionsBeforeRepartition);

@@ -305,7 +305,7 @@ public class FactViralLoad {
 
         String factVLQuery = loadViralLoad.loadQuery("LoadFactViralLoad.sql");
         Dataset<Row> factVLDf = session.sql(factVLQuery);
-        factVLDf = factVLDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
+//        factVLDf = factVLDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
         factVLDf.printSchema();
         final int writePartitions = 20;
         factVLDf

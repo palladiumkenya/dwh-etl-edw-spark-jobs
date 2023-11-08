@@ -138,8 +138,8 @@ public class LoadFactPartnerTracing {
         Dataset<Row> factHtsPartnerTracingDf = session.sql(factPartnerTracingQuery);
 
         // Add FactKey Column
-        WindowSpec window = Window.orderBy("PatientKey");
-        factHtsPartnerTracingDf = factHtsPartnerTracingDf.withColumn("FactKey",  row_number().over(window));
+//        WindowSpec window = Window.orderBy("PatientKey");
+//        factHtsPartnerTracingDf = factHtsPartnerTracingDf.withColumn("FactKey",  row_number().over(window));
         factHtsPartnerTracingDf.printSchema();
         factHtsPartnerTracingDf
                 .repartition(50)
@@ -149,6 +149,7 @@ public class LoadFactPartnerTracing {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
+                .option("truncate", "true")
                 .option("dbtable", "dbo.FactHTSPartnerTracing")
                 .mode(SaveMode.Overwrite)
                 .save();

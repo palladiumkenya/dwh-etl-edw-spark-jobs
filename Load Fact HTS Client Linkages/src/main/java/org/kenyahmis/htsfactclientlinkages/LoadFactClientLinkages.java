@@ -117,8 +117,8 @@ public class LoadFactClientLinkages {
         Dataset<Row> factClientLinkagesDf = session.sql(factClientLinkages);
 
         // Add FactKey Column
-        WindowSpec window = Window.orderBy("DateEnrolledKey");
-        factClientLinkagesDf = factClientLinkagesDf.withColumn("FactKey",  row_number().over(window));
+//        WindowSpec window = Window.orderBy("DateEnrolledKey");
+//        factClientLinkagesDf = factClientLinkagesDf.withColumn("FactKey",  row_number().over(window));
         factClientLinkagesDf.printSchema();
         factClientLinkagesDf
                 .repartition(20)
@@ -128,6 +128,7 @@ public class LoadFactClientLinkages {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
+                .option("truncate", "true")
                 .option("dbtable", "dbo.FactHTSClientLinkages")
                 .mode(SaveMode.Overwrite)
                 .save();

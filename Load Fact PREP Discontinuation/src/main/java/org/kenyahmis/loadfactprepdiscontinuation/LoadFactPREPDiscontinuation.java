@@ -144,7 +144,7 @@ public class LoadFactPREPDiscontinuation {
         String factPrepDisQuery = loadPREPDiscontinuations.loadQuery("LoadFactPrepDiscontinuation.sql");
 
         Dataset<Row> factPrepDisDf = session.sql(factPrepDisQuery);
-        factPrepDisDf = factPrepDisDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
+//        factPrepDisDf = factPrepDisDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
         factPrepDisDf.printSchema();
         long factExitsCount = factPrepDisDf.count();
         logger.info("Fact Prep discontinuation Count is: " + factExitsCount);
@@ -157,6 +157,7 @@ public class LoadFactPREPDiscontinuation {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
+                .option("truncate", "true")
                 .option("dbtable", "dbo.FactPrepDiscontinuation")
                 .mode(SaveMode.Overwrite)
                 .save();

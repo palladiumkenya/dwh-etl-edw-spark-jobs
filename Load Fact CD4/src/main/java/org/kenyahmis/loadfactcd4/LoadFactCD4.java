@@ -126,7 +126,7 @@ public class LoadFactCD4 {
         String factCD4Query = loadCD4s.loadQuery("LoadFactCD4.sql");
 
         Dataset<Row> factExitsDf = session.sql(factCD4Query);
-        factExitsDf = factExitsDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
+//        factExitsDf = factExitsDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
         factExitsDf.printSchema();
         long factExitsCount = factExitsDf.count();
         logger.info("Fact CD4 Count is: " + factExitsCount);
@@ -139,6 +139,7 @@ public class LoadFactCD4 {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
+                .option("truncate", "true")
                 .option("dbtable", "dbo.FactCD4")
                 .mode(SaveMode.Overwrite)
                 .save();

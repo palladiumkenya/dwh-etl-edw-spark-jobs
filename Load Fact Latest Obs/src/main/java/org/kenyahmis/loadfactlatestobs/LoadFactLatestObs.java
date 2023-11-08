@@ -116,7 +116,7 @@ public class LoadFactLatestObs {
         // latest Obs df
         String latestObsQuery = loadFactLatestObs.loadQuery("FactLatestObs.sql");
         Dataset<Row> latestObsDf = session.sql(latestObsQuery);
-        latestObsDf = latestObsDf.withColumn("Factkey", monotonically_increasing_id().plus(1));
+//        latestObsDf = latestObsDf.withColumn("Factkey", monotonically_increasing_id().plus(1));
 
         latestObsDf.printSchema();
         final int writePartitions = 20;
@@ -128,6 +128,7 @@ public class LoadFactLatestObs {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
+                .option("truncate", "true")
                 .option("dbtable", "dbo.FactLatestObs")
                 .mode(SaveMode.Overwrite)
                 .save();

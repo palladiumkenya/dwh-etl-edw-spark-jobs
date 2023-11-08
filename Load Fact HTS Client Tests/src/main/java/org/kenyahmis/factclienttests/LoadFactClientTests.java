@@ -132,8 +132,8 @@ public class LoadFactClientTests {
         Dataset<Row> factClientTestsDf = session.sql(factClientTests);
 
         // Add FactKey Column
-        WindowSpec window = Window.orderBy("DateTestedKey");
-        factClientTestsDf = factClientTestsDf.withColumn("FactKey", row_number().over(window));
+//        WindowSpec window = Window.orderBy("DateTestedKey");
+//        factClientTestsDf = factClientTestsDf.withColumn("FactKey", row_number().over(window));
         factClientTestsDf.printSchema();
         factClientTestsDf
                 .repartition(50)
@@ -143,6 +143,7 @@ public class LoadFactClientTests {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
+                .option("truncate", "true")
                 .option("dbtable", "dbo.FactHTSClientTests")
                 .mode(SaveMode.Overwrite)
                 .save();

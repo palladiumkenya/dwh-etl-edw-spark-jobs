@@ -130,8 +130,8 @@ public class LoadFactPartnerNotification {
         Dataset<Row> factPartnerNotificationDf = session.sql(factPartnerNotificationQuery);
 
         // Add FactKey Column
-        WindowSpec window = Window.orderBy("PatientKey");
-        factPartnerNotificationDf = factPartnerNotificationDf.withColumn("FactKey",  row_number().over(window));
+//        WindowSpec window = Window.orderBy("PatientKey");
+//        factPartnerNotificationDf = factPartnerNotificationDf.withColumn("FactKey",  row_number().over(window));
         factPartnerNotificationDf.printSchema();
         factPartnerNotificationDf
                 .repartition(50)
@@ -141,6 +141,7 @@ public class LoadFactPartnerNotification {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
+                .option("truncate", "true")
                 .option("dbtable", "dbo.FactHTSPartnerNotificationServices")
                 .mode(SaveMode.Overwrite)
                 .save();

@@ -130,7 +130,7 @@ public class LoadFactDefaulterTracing {
 
         String factDefaulterTracingQuery = loadFactDefaulterTracing.loadQuery("LoadFactDefaulterTracing.sql");
         Dataset<Row> factDefaulterTracingDf = session.sql(factDefaulterTracingQuery);
-        factDefaulterTracingDf = factDefaulterTracingDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
+//        factDefaulterTracingDf = factDefaulterTracingDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
         factDefaulterTracingDf.printSchema();
         final int writePartitions = 200;
         factDefaulterTracingDf

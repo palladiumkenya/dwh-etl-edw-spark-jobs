@@ -242,7 +242,7 @@ public class LoadFactPREPRefills {
         String factPrepRefilQuery = loadPREPRefills.loadQuery("LoadFactPREPRefills.sql");
 
         Dataset<Row> factPrepRefilDf = session.sql(factPrepRefilQuery);
-        factPrepRefilDf = factPrepRefilDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
+//        factPrepRefilDf = factPrepRefilDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
         factPrepRefilDf.printSchema();
         long factExitsCount = factPrepRefilDf.count();
         logger.info("Fact Prep Refills Count is: " + factExitsCount);
@@ -255,6 +255,7 @@ public class LoadFactPREPRefills {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
+                .option("truncate", "true")
                 .option("dbtable", "dbo.FactPrepRefills")
                 .mode(SaveMode.Overwrite)
                 .save();

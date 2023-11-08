@@ -121,7 +121,7 @@ public class LoadFactOtz {
 
         String factOtzQuery = loadFactOtz.loadQuery("LoadFactOtz.sql");
         Dataset<Row> factOtzDf = session.sql(factOtzQuery);
-        factOtzDf = factOtzDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
+//        factOtzDf = factOtzDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
         factOtzDf.printSchema();
         final int writePartitions = 20;
         factOtzDf

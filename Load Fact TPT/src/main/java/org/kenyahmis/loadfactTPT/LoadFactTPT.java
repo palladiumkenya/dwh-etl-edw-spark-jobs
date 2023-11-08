@@ -121,7 +121,7 @@ public class LoadFactTPT {
 
         String factTPTQuery = loadFactTPT.loadQuery("LoadFactTPT.sql");
         Dataset<Row> factTPTDf = session.sql(factTPTQuery);
-        factTPTDf = factTPTDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
+//        factTPTDf = factTPTDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
         factTPTDf.printSchema();
         final int writePartitions = 20;
         factTPTDf

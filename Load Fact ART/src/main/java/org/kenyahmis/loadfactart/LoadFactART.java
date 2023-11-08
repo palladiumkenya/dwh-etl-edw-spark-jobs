@@ -159,7 +159,7 @@ public class LoadFactART {
         String factArtQuery = loadFactART.loadQuery("LoadFactArt.sql");
 
         Dataset<Row> factArtDf = session.sql(factArtQuery);
-        factArtDf = factArtDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
+//        factArtDf = factArtDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
         factArtDf.printSchema();
         long factARTCount = factArtDf.count();
         logger.info("Fact ART Count is: " + factARTCount);
@@ -172,6 +172,7 @@ public class LoadFactART {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
+                .option("truncate", "true")
                 .option("dbtable", "dbo.FACTART")
                 .mode(SaveMode.Overwrite)
                 .save();

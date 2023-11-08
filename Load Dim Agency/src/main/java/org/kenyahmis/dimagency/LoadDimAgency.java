@@ -31,8 +31,6 @@ public class LoadDimAgency {
                 .load();
         sourceAgencyDataframe.createOrReplaceTempView("source_agency");
         Dataset<Row> dimAgencyDf = session.sql("SELECT upper(Agency) AS AgencyName,current_date() as LoadDate FROM source_agency");
-        WindowSpec window = Window.orderBy("AgencyName");
-        dimAgencyDf = dimAgencyDf.withColumn("AgencyKey",  row_number().over(window));
         dimAgencyDf = dimAgencyDf.withColumn("LoadDate", current_date());
 
         dimAgencyDf.write()

@@ -113,7 +113,7 @@ public class LoadFactPatientExits {
         String factExitsQuery = loadPatientExits.loadQuery("LoadFactPatientExits.sql");
 
         Dataset<Row> factExitsDf = session.sql(factExitsQuery);
-        factExitsDf = factExitsDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
+//        factExitsDf = factExitsDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
         factExitsDf.printSchema();
         long factExitsCount = factExitsDf.count();
         logger.info("Fact Patient Exits Count is: " + factExitsCount);
@@ -126,6 +126,7 @@ public class LoadFactPatientExits {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
+                .option("truncate", "true")
                 .option("dbtable", "dbo.FactPatientExits")
                 .mode(SaveMode.Overwrite)
                 .save();

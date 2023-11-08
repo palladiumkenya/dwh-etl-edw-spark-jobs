@@ -130,8 +130,8 @@ public class LoadFactTestKits {
         Dataset<Row> factTestKitNamesDf = session.sql(factTestKitNamesQuery);
 
         // Add FactKey Column
-        WindowSpec window = Window.orderBy("PatientKey");
-        factTestKitNamesDf = factTestKitNamesDf.withColumn("FactKey", row_number().over(window));
+//        WindowSpec window = Window.orderBy("PatientKey");
+//        factTestKitNamesDf = factTestKitNamesDf.withColumn("FactKey", row_number().over(window));
         factTestKitNamesDf
                 .repartition(50)
                 .write()
@@ -141,6 +141,7 @@ public class LoadFactTestKits {
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
                 .option("dbtable", "dbo.FactHTSTestKits")
+                .option("truncate", "true")
                 .mode(SaveMode.Overwrite)
                 .save();
         // TODO Create primary key

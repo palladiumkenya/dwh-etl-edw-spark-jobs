@@ -189,8 +189,8 @@ public class LoadFactPrepVisits {
         Dataset<Row> factPrepDf = session.sql(factPrepQuery);
 
         // Add FactKey Column
-        WindowSpec window = Window.orderBy("PatientKey");
-        factPrepDf = factPrepDf.withColumn("FactKey",  row_number().over(window));
+//        WindowSpec window = Window.orderBy("PatientKey");
+//        factPrepDf = factPrepDf.withColumn("FactKey",  row_number().over(window));
         factPrepDf.printSchema();
         factPrepDf
                 .repartition(50)
@@ -200,6 +200,7 @@ public class LoadFactPrepVisits {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
+                .option("truncate", "true")
                 .option("dbtable", "dbo.FactPrepVisits")
                 .mode(SaveMode.Overwrite)
                 .save();

@@ -149,7 +149,7 @@ public class LoadFactPREPAssessments {
         String factPrepAssQuery = loadPREPDiscontinuations.loadQuery("LoadFactPrepAssessments.sql");
 
         Dataset<Row> factPrepAssDf = session.sql(factPrepAssQuery);
-        factPrepAssDf = factPrepAssDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
+//        factPrepAssDf = factPrepAssDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
         factPrepAssDf.printSchema();
         long factExitsCount = factPrepAssDf.count();
         logger.info("Fact Prep assessments Count is: " + factExitsCount);
@@ -162,6 +162,7 @@ public class LoadFactPREPAssessments {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
+                .option("truncate", "true")
                 .option("dbtable", "dbo.FactPrepAssessments")
                 .mode(SaveMode.Overwrite)
                 .save();

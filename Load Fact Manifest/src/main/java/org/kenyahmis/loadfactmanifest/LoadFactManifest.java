@@ -104,7 +104,7 @@ public class LoadFactManifest {
             return;
         }
         Dataset<Row> manifestDf = session.sql(query);
-        manifestDf = manifestDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
+//        manifestDf = manifestDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
         manifestDf.printSchema();
         int numberOfPartitionsBeforeRepartition = manifestDf.rdd().getNumPartitions();
         logger.info("Number of partitions before repartition: "+ numberOfPartitionsBeforeRepartition);

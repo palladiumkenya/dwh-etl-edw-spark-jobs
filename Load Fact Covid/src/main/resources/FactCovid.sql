@@ -1,5 +1,4 @@
 Select
-    monotonically_increasing_id() + 1 as Factkey,
     Patient.PatientKey,
     facility.FacilityKey,
     partner.PartnerKey,

@@ -124,7 +124,7 @@ public class LoadFactAdverseEvents {
         String factEventsQuery = loadFactAdverse.loadQuery("LoadFactAdverseEvents.sql");
 
         Dataset<Row> factEventsDf = session.sql(factEventsQuery);
-        factEventsDf = factEventsDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
+//        factEventsDf = factEventsDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
         factEventsDf.printSchema();
         long factEventsCount = factEventsDf.count();
         logger.info("Fact Adverse Events Count is: " + factEventsCount);
