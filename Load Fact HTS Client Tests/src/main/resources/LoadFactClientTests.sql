@@ -42,7 +42,7 @@ select
     hts_encounter.Setting,
     current_date ()  as LoadDate
 from hts_encounter
-left join DimPatient as patient on patient.PatientPKHash = hts_encounter.PatientPKHash
+left join DimPatient as patient on patient.SiteCode = hts_encounter.SiteCode and patient.PatientPKHash = hts_encounter.PatientPKHash
 left join DimFacility as facility on facility.MFLCode = hts_encounter.SiteCode
 left join MFL_partner_agency_combination on MFL_partner_agency_combination.MFL_Code = hts_encounter.SiteCode
 left join DimPartner as partner on partner.PartnerName = MFL_partner_agency_combination.SDP
