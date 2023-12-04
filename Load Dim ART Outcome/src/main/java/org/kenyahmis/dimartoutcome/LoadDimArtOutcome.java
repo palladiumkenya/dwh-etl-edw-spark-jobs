@@ -34,18 +34,20 @@ public class LoadDimArtOutcome {
         distinctOutcomes.add(RowFactory.create("T"));
         distinctOutcomes.add(RowFactory.create("V"));
         distinctOutcomes.add(RowFactory.create("NP"));
-        distinctOutcomes.add(RowFactory.create("uL"));
+        distinctOutcomes.add(RowFactory.create("UL"));
+        distinctOutcomes.add(RowFactory.create("FV"));
 
         Dataset<Row> outcomesDataframe = session.createDataFrame(distinctOutcomes, structType);
         outcomesDataframe = outcomesDataframe
                 .withColumn("ARTOutcomeDescription", when(col("ARTOutcome").equalTo("S"), "Stopped")
-                        .when(col("ARTOutcome").equalTo("D"), "Dead")
-                        .when(col("ARTOutcome").equalTo("L"), "Loss To Follow Up")
-                        .when(col("ARTOutcome").equalTo("NV"), "No Visit")
-                        .when(col("ARTOutcome").equalTo("T"), "Transferred Out")
-                        .when(col("ARTOutcome").equalTo("V"), "Active")
-                        .when(col("ARTOutcome").equalTo("NP"), "New Patient")
-                        .when(col("ARTOutcome").equalTo("uL"), "Undocumented Loss"))
+                        .when(col("ARTOutcome").equalTo("D"), "DEAD")
+                        .when(col("ARTOutcome").equalTo("L"), "LOSS TO FOLLOW UP")
+                        .when(col("ARTOutcome").equalTo("NV"), "NO VISIT")
+                        .when(col("ARTOutcome").equalTo("T"), "TRANSFERRED OUT")
+                        .when(col("ARTOutcome").equalTo("V"), "ACTIVE")
+                        .when(col("ARTOutcome").equalTo("NP"), "NEW PATIENT")
+                        .when(col("ARTOutcome").equalTo("UL"), "UNDOCUMENTED LOSS")
+                        .when(col("ARTOutcome").equalTo("FV"), "FUTURE VISIT"))
                 .withColumn("LoadDate", lit(Date.valueOf(LocalDate.now())));
 
         outcomesDataframe.printSchema();

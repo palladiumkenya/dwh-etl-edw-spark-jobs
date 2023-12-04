@@ -6,5 +6,6 @@ select
              cast(DOB as date) as DOB,
              Gender,
              MaritalStatus,
-             NupiHash
+             NupiHash,
+             voided
 from dbo.HTS_clients as clients

@@ -75,6 +75,22 @@ public class LoadDimPatients {
         prepPatientSourceDataDf.createOrReplaceTempView("prep_patient_source");
         prepPatientSourceDataDf.printSchema();
 
+        // pmtct patient source
+        logger.info("Loading PMTCT Patient source");
+        final String loadPmtctPatientSourceDataQueryFileName = "PmtctPatientSource.sql";
+        String loadPmtctPatientSourceQuery = loadDimPatients.loadQuery(loadPmtctPatientSourceDataQueryFileName);
+        Dataset<Row> pmtctPatientSourceDataDf = session.read()
+                .format("jdbc")
+                .option("url", rtConfig.get("spark.ods.url"))
+                .option("driver", rtConfig.get("spark.ods.driver"))
+                .option("user", rtConfig.get("spark.ods.user"))
+                .option("password", rtConfig.get("spark.ods.password"))
+                .option("query", loadPmtctPatientSourceQuery)
+                .load();
+        pmtctPatientSourceDataDf.persist(StorageLevel.DISK_ONLY());
+        pmtctPatientSourceDataDf.createOrReplaceTempView("pmtct_patient_source");
+        pmtctPatientSourceDataDf.printSchema();
+
         // combined data ct hts
         final String loadCombinedCtHtsDataQueryFileName = "CombinedDataCTHTS.sql";
         String loadCombinedCtHtsQuery = loadDimPatients.loadQuery(loadCombinedCtHtsDataQueryFileName);
@@ -82,12 +98,19 @@ public class LoadDimPatients {
         combinedCtHtsDf.persist(StorageLevel.DISK_ONLY());
         combinedCtHtsDf.createOrReplaceTempView("combined_data_ct_hts");
 
-        // combined data ct hts
+        // combined data ct hts prep
         final String loadCombinedCtHtsPrepDataQueryFileName = "CombinedDataCTHTSPrep.sql";
         String loadCombinedCtHtsPrepQuery = loadDimPatients.loadQuery(loadCombinedCtHtsPrepDataQueryFileName);
         Dataset<Row> combinedCtHtsPrepDf = session.sql(loadCombinedCtHtsPrepQuery);
         combinedCtHtsPrepDf.persist(StorageLevel.DISK_ONLY());
         combinedCtHtsPrepDf.createOrReplaceTempView("combined_data_ct_hts_prep");
+
+        // combined data ct hts prep PMTCT
+        final String loadCombinedCtHtsPrepPMTCTDataQueryFileName = "CombinedDataCTHTSPrepPMTCT.sql";
+        String loadCombinedCtHtsPrepPMTCTQuery = loadDimPatients.loadQuery(loadCombinedCtHtsPrepPMTCTDataQueryFileName);
+        Dataset<Row> combinedCtHtsPrepPMTCTDf = session.sql(loadCombinedCtHtsPrepPMTCTQuery);
+        combinedCtHtsPrepPMTCTDf.persist(StorageLevel.DISK_ONLY());
+        combinedCtHtsPrepPMTCTDf.createOrReplaceTempView("combined_data_ct_hts_prep_pmtct");
 
         // load dim patients
         String loadDimPatientsQuery = loadDimPatients.loadQuery("LoadDimPatients.sql");

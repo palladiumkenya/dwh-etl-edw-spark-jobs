@@ -16,7 +16,7 @@ select
     combined_data_ct_hts.HTSNumberHash,
     prep_patient_source.PrepNumber,
     cast(date_format(prep_patient_source.PrepEnrollmentDate, 'yyyyMMdd') as int) as PrepEnrollmentDateKey,
-    current_date() as LoadDate
+    current_date() as LoadDate,
+    coalesce(combined_data_ct_hts.voided,prep_patient_source.voided) As Voided
 from combined_data_ct_hts
-         full join prep_patient_source on combined_data_ct_hts.PatientPKHash = prep_patient_source.PatientPKHash
-    and prep_patient_source.SiteCode = combined_data_ct_hts.SiteCode
+full join prep_patient_source on combined_data_ct_hts.PatientPKHash = prep_patient_source.PatientPKHash and prep_patient_source.SiteCode = combined_data_ct_hts.SiteCode
