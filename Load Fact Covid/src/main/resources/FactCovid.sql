@@ -48,4 +48,4 @@ from Covid
     left join DimDate as COVID19TestDate  on COVID19TestDate.Date = Covid.COVID19TestDate
     left join DimDate as AdmissionStartDate  on AdmissionStartDate.Date = Covid.AdmissionStartDate
     left join DimDate as AdmissionEndDate  on AdmissionEndDate.Date = Covid.AdmissionEndDate
-Where RowNumber = 1;
+Where RowNumber = 1 and patient.voided =0;

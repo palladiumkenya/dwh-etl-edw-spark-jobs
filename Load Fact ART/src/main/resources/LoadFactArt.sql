@@ -27,6 +27,7 @@ Select
     StartARTAtThisfacility,
     PreviousARTStartDate,
     PreviousARTRegimen,
+    WhoStage,
     current_date() as LoadDate
 from Patient
 left join DimPatient as Pat on pat.PatientPKHash=Patient.PatientPkHash and Pat.SiteCode=Patient.SiteCode
@@ -38,4 +39,5 @@ left join DimDate as StartARTDate on StartARTDate.Date = Patient.StartARTDate
 left join DimDate as LastARTDate on  LastARTDate.Date=Patient.LastARTDate
 left join DimAgency as agency on agency.AgencyName = MFL_partner_agency_combination.Agency
 left join Intermediate_ARTOutcomes As IOutcomes  on IOutcomes.PatientPKHash = Patient.PatientPkHash  and IOutcomes.SiteCode = Patient.SiteCode
-left join DimARTOutcome ARTOutcome on ARTOutcome.ARTOutcome=IOutcomes.ARTOutcome;
+left join DimARTOutcome ARTOutcome on ARTOutcome.ARTOutcome=IOutcomes.ARTOutcome
+WHERE pat.voided =0;

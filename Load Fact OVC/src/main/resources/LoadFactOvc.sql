@@ -23,4 +23,4 @@ from source_ovc
     left join DimAgency as agency on agency.AgencyName = MFL_partner_agency_combination.Agency
     left join DimAgeGroup as age_group on age_group.Age = source_ovc.AgeLastVisit
     left join DimRelationshipWithPatient as relationship_client on relationship_client.RelationshipWithPatient = source_ovc.RelationshipToClient
-where source_ovc.rank = 1
+where source_ovc.rank = 1 and patient.voided =0

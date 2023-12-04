@@ -15,3 +15,4 @@ left join mfl_partner_agency_combination on mfl_partner_agency_combination.MFL_C
 left join partner on partner.PartnerName = mfl_partner_agency_combination.SDP
 left join agency on agency.AgencyName = mfl_partner_agency_combination.Agency
 left join art_outcome on art_outcome.ARTOutcome = txcurr_report.ARTOutcome
+WHERE patient.voided =0;

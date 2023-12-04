@@ -20,4 +20,5 @@ from visits_data
      left join DimAgency as agency on agency.AgencyName = MFL_partner_agency_combination.Agency
      left join DimDate as visit on visit.Date = visits_data.VisitDate
      left join DimAgeGroup as age_group on age_group.Age = visits_data.AgeAtVisit
-     left join DimDifferentiatedCare as diff_care on diff_care.DifferentiatedCare = visits_data.DifferentiatedCare;
+     left join DimDifferentiatedCare as diff_care on diff_care.DifferentiatedCare = visits_data.DifferentiatedCare
+WHERE patient.voided =0;

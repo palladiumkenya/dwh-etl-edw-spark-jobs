@@ -24,13 +24,11 @@ public class LoadFactCD4 {
                 .getOrCreate();
 
         RuntimeConfig rtConfig = session.conf();
-
-        final String loadCD4QueryFileName = "LoadCD4s.sql";
         LoadFactCD4 loadCD4s = new LoadFactCD4();
-        String loadPatientQuery = loadCD4s.loadQuery(loadCD4QueryFileName);
-        if (loadPatientQuery == null) {
-            return;
-        }
+
+        //
+        final String loadCD4QueryFileName = "LoadCD4s.sql";
+        String loadCD4Query = loadCD4s.loadQuery(loadCD4QueryFileName);
 
         Dataset<Row> cd4DataFrame = session.read()
                 .format("jdbc")
@@ -38,13 +36,42 @@ public class LoadFactCD4 {
                 .option("driver", rtConfig.get("spark.ods.driver"))
                 .option("user", rtConfig.get("spark.ods.user"))
                 .option("password", rtConfig.get("spark.ods.password"))
-                .option("query", loadPatientQuery)
+                .option("query", loadCD4Query)
                 .load();
-        cd4DataFrame.createOrReplaceTempView("source_CD4");
+        cd4DataFrame.createOrReplaceTempView("CD4s");
         cd4DataFrame.persist(StorageLevel.DISK_ONLY());
 
-        cd4DataFrame.printSchema();
-        cd4DataFrame.show();
+        //
+        final String loadLatestCD4QueryFileName = "LoadLatestCD4s.sql";
+        String loadLatestCD4Query = loadCD4s.loadQuery(loadLatestCD4QueryFileName);
+
+        Dataset<Row> latestCD4sDataFrame = session.read()
+                .format("jdbc")
+                .option("url", rtConfig.get("spark.ods.url"))
+                .option("driver", rtConfig.get("spark.ods.driver"))
+                .option("user", rtConfig.get("spark.ods.user"))
+                .option("password", rtConfig.get("spark.ods.password"))
+                .option("query", loadLatestCD4Query)
+                .load();
+        latestCD4sDataFrame.createOrReplaceTempView("LatestCD4s");
+        latestCD4sDataFrame.persist(StorageLevel.DISK_ONLY());
+
+        final String loadSourceCD4QueryFileName = "LoadSourceCD4s.sql";
+        String loadSourceCD4sQuery = loadCD4s.loadQuery(loadSourceCD4QueryFileName);
+
+        Dataset<Row> sourceCD4DataFrame = session.read()
+                .format("jdbc")
+                .option("url", rtConfig.get("spark.ods.url"))
+                .option("driver", rtConfig.get("spark.ods.driver"))
+                .option("user", rtConfig.get("spark.ods.user"))
+                .option("password", rtConfig.get("spark.ods.password"))
+                .option("query", loadSourceCD4sQuery)
+                .load();
+        sourceCD4DataFrame.createOrReplaceTempView("source_CD4");
+        sourceCD4DataFrame.persist(StorageLevel.DISK_ONLY());
+
+        sourceCD4DataFrame.printSchema();
+        sourceCD4DataFrame.show();
 
         Dataset<Row> dimDateDataFrame = session.read()
                 .format("jdbc")

@@ -33,9 +33,11 @@ Select
     StartRegimen,
     lastRegimenline,
     StartRegimenline,
+    obs.WHOStage,
     outcome.ARTOutcome
 FROM ODS.dbo.CT_Patient Patient
 inner join ODS.dbo.CT_ARTPatients ART on ART.PatientPK = Patient.Patientpk and ART.SiteCode = Patient.SiteCode
 left join ODS.dbo.Intermediate_PregnancyAsATInitiation Pre on Pre.Patientpk = Patient.PatientPK and Pre.SiteCode = Patient.SiteCode
 left join ODS.dbo.Intermediate_LastPatientEncounter las on las.PatientPK = Patient.PatientPK and las.SiteCode = Patient.SiteCode
 left join ODS.dbo.Intermediate_ARTOutcomes outcome on outcome.PatientPK = Patient.PatientPK and outcome.SiteCode = Patient.SiteCode
+left join ODS.dbo.intermediate_LatestObs obs on obs.PatientPK=Patient.PatientPK and obs.SiteCode=Patient.SiteCode

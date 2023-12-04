@@ -1,10 +1,5 @@
 SELECT
-    ROW_NUMBER () OVER (
-        PARTITION BY Covid.PatientPKHash,
-        Covid.SiteCode
-        ORDER BY
-            Covid19AssessmentDate DESC
-        ) AS RowNumber,
+    ROW_NUMBER () OVER ( PARTITION BY Covid.PatientPKHash, Covid.SiteCode ORDER BY Covid19AssessmentDate DESC ) AS RowNumber,
     Covid.PatientIDHash,
     Covid.PatientPKHash,
     Covid.SiteCode,
@@ -16,8 +11,7 @@ SELECT
     FirstDoseVaccineAdministered,
     DateGivenSecondDose,
     SecondDoseVaccineAdministered,
-    CASE WHEN VaccinationStatus IS NULL
-        OR VaccinationStatus = '' THEN 'Not Accessed' ELSE VaccinationStatus END AS VaccinationStatus,
+    VaccinationStatus,
     VaccineVerification,
     BoosterGiven,
     BoosterDose,
