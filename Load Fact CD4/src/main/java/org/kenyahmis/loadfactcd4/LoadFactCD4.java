@@ -19,12 +19,49 @@ public class LoadFactCD4 {
         SparkConf conf = new SparkConf();
         conf.setAppName("Load CD4 Fact");
 
+
         SparkSession session = SparkSession.builder()
                 .config(conf)
                 .getOrCreate();
 
         RuntimeConfig rtConfig = session.conf();
         LoadFactCD4 loadCD4s = new LoadFactCD4();
+
+        //Load CT_Patient
+        Dataset<Row> ctPatientDataFrame = session.read()
+                .format("jdbc")
+                .option("url", rtConfig.get("spark.ods.url"))
+                .option("driver", rtConfig.get("spark.ods.driver"))
+                .option("user", rtConfig.get("spark.ods.user"))
+                .option("password", rtConfig.get("spark.ods.password"))
+                .option("dbtable", "dbo.CT_Patient")
+                .load();
+        ctPatientDataFrame.createOrReplaceTempView("ct_patient");
+        ctPatientDataFrame.persist(StorageLevel.DISK_ONLY());
+
+        //Load CT_PatientBaselines
+        Dataset<Row> patientBaselinesDataFrame = session.read()
+                .format("jdbc")
+                .option("url", rtConfig.get("spark.ods.url"))
+                .option("driver", rtConfig.get("spark.ods.driver"))
+                .option("user", rtConfig.get("spark.ods.user"))
+                .option("password", rtConfig.get("spark.ods.password"))
+                .option("dbtable", "dbo.CT_PatientBaselines")
+                .load();
+        patientBaselinesDataFrame.createOrReplaceTempView("baselines");
+        patientBaselinesDataFrame.persist(StorageLevel.DISK_ONLY());
+
+        //Load Intermediate_LastPatientEncounter
+        Dataset<Row> lastEncounterDataFrame = session.read()
+                .format("jdbc")
+                .option("url", rtConfig.get("spark.ods.url"))
+                .option("driver", rtConfig.get("spark.ods.driver"))
+                .option("user", rtConfig.get("spark.ods.user"))
+                .option("password", rtConfig.get("spark.ods.password"))
+                .option("dbtable", "dbo.Intermediate_LastPatientEncounter")
+                .load();
+        lastEncounterDataFrame.createOrReplaceTempView("last_encounter");
+        lastEncounterDataFrame.persist(StorageLevel.DISK_ONLY());
 
         //
         final String loadCD4QueryFileName = "LoadCD4s.sql";
@@ -42,36 +79,14 @@ public class LoadFactCD4 {
         cd4DataFrame.persist(StorageLevel.DISK_ONLY());
 
         //
-        final String loadLatestCD4QueryFileName = "LoadLatestCD4s.sql";
-        String loadLatestCD4Query = loadCD4s.loadQuery(loadLatestCD4QueryFileName);
+        session.sql("Select * from CD4s where RowNum=1")
+                .createOrReplaceTempView("LatestCD4s");
 
-        Dataset<Row> latestCD4sDataFrame = session.read()
-                .format("jdbc")
-                .option("url", rtConfig.get("spark.ods.url"))
-                .option("driver", rtConfig.get("spark.ods.driver"))
-                .option("user", rtConfig.get("spark.ods.user"))
-                .option("password", rtConfig.get("spark.ods.password"))
-                .option("query", loadLatestCD4Query)
-                .load();
-        latestCD4sDataFrame.createOrReplaceTempView("LatestCD4s");
-        latestCD4sDataFrame.persist(StorageLevel.DISK_ONLY());
 
         final String loadSourceCD4QueryFileName = "LoadSourceCD4s.sql";
         String loadSourceCD4sQuery = loadCD4s.loadQuery(loadSourceCD4QueryFileName);
 
-        Dataset<Row> sourceCD4DataFrame = session.read()
-                .format("jdbc")
-                .option("url", rtConfig.get("spark.ods.url"))
-                .option("driver", rtConfig.get("spark.ods.driver"))
-                .option("user", rtConfig.get("spark.ods.user"))
-                .option("password", rtConfig.get("spark.ods.password"))
-                .option("query", loadSourceCD4sQuery)
-                .load();
-        sourceCD4DataFrame.createOrReplaceTempView("source_CD4");
-        sourceCD4DataFrame.persist(StorageLevel.DISK_ONLY());
-
-        sourceCD4DataFrame.printSchema();
-        sourceCD4DataFrame.show();
+        session.sql(loadSourceCD4sQuery).createOrReplaceTempView("source_CD4");
 
         Dataset<Row> dimDateDataFrame = session.read()
                 .format("jdbc")
