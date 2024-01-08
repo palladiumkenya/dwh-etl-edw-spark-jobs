@@ -51,6 +51,7 @@
         <module>Load Fact PREP Discontinuation</module>
         <module>Load Fact PREP Refills</module>
         <module>Load Fact PREP Assessments</module>
+        <module>Load Fact NCDs</module>
     </modules>
 
     <dependencyManagement>
