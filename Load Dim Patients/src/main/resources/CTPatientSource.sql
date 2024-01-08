@@ -19,7 +19,8 @@ select
         when outcomes.ARTOutcome =  'V' then 1
         else 0
         end as IsTXCurr,
-    cast(getdate() as date) as LoadDate
+    cast(getdate() as date) as LoadDate,
+    patients.voided
 from
     dbo.CT_Patient as patients
         left join dbo.CT_PatientBaselines as baselines on patients.PatientPKHash = baselines.PatientPKHash

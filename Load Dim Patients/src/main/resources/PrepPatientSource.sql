@@ -7,5 +7,6 @@ select
              Sex,
              DateofBirth,
              ClientType,
-             MaritalStatus
+             MaritalStatus,
+             voided
 from ODS.dbo.PrEP_Patient
