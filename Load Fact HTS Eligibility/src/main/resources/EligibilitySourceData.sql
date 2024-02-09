@@ -58,5 +58,9 @@ select
     TypeGBV,
     HIVRiskCategory,
     HtsRiskScore,
-    ReasonRefferredForTesting
+    ReasonRefferredForTesting,
+    ReasonNotReffered,
+    HTSStrategy,
+    HTSEntryPoint,
+    CurrentlyOnPrep
 from dbo.HTS_EligibilityExtract
