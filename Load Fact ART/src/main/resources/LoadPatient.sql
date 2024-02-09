@@ -1,6 +1,7 @@
 Select
     Patient.PatientIDHash,
     Patient.PatientPKHash,
+    Patient.PatientPK,
     cast (Patient.SiteCode as nvarchar) As SiteCode,
     DATEDIFF(
             yy, Patient.DOB, Patient.RegistrationAtCCC
@@ -34,6 +35,7 @@ Select
     lastRegimenline,
     StartRegimenline,
     obs.WHOStage,
+    Patient.DateConfirmedHIVPositive,
     outcome.ARTOutcome
 FROM ODS.dbo.CT_Patient Patient
 inner join ODS.dbo.CT_ARTPatients ART on ART.PatientPK = Patient.Patientpk and ART.SiteCode = Patient.SiteCode

@@ -58,6 +58,47 @@ public class LoadFactART {
         patientDataFrame.printSchema();
         patientDataFrame.show();
 
+        String loadDepressionScreeningQuery = loadFactART.loadQuery("DepressionScreening.sql");
+        Dataset<Row> depressionScreeningDataFrame = session.read()
+                .format("jdbc")
+                .option("url", rtConfig.get("spark.ods.url"))
+                .option("driver", rtConfig.get("spark.ods.driver"))
+                .option("user", rtConfig.get("spark.ods.user"))
+                .option("password", rtConfig.get("spark.ods.password"))
+                .option("query", loadDepressionScreeningQuery)
+                .load();
+        depressionScreeningDataFrame.createOrReplaceTempView("DepressionScreening");
+        depressionScreeningDataFrame.persist(StorageLevel.DISK_ONLY());
+
+        String loadLatestDepressionQuery = loadFactART.loadQuery("LatestDepression.sql");
+        session.sql(loadLatestDepressionQuery).createOrReplaceTempView("LatestDepressionScreening");
+
+        Dataset<Row> visitsDataFrame = session.read()
+                .format("jdbc")
+                .option("url", rtConfig.get("spark.ods.url"))
+                .option("driver", rtConfig.get("spark.ods.driver"))
+                .option("user", rtConfig.get("spark.ods.user"))
+                .option("password", rtConfig.get("spark.ods.password"))
+                .option("dbtable", "dbo.Intermediate_LastVisitDate")
+                .load();
+        visitsDataFrame.persist(StorageLevel.DISK_ONLY());
+        visitsDataFrame.createOrReplaceTempView("visit");
+
+        Dataset<Row> latestDiabetesDataFrame = session.read()
+                .format("jdbc")
+                .option("url", rtConfig.get("spark.ods.url"))
+                .option("driver", rtConfig.get("spark.ods.driver"))
+                .option("user", rtConfig.get("spark.ods.user"))
+                .option("password", rtConfig.get("spark.ods.password"))
+                .option("dbtable", "dbo.Intermediate_LatestDiabetesTests")
+                .load();
+        latestDiabetesDataFrame.persist(StorageLevel.DISK_ONLY());
+        latestDiabetesDataFrame.createOrReplaceTempView("latest_diabetes_test");
+
+        String loadNCDScreeningQuery = loadFactART.loadQuery("NCDScreening.sql");
+        session.sql(loadNCDScreeningQuery).createOrReplaceTempView("ncd_screening");
+
+
         Dataset<Row> dimDateDataFrame = session.read()
                 .format("jdbc")
                 .option("url", rtConfig.get("spark.edw.url"))
