@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import static org.apache.spark.sql.functions.*;
 
 public class LoadFactART {
     private static final Logger logger = LoggerFactory.getLogger(LoadFactART.class);
@@ -213,7 +212,7 @@ public class LoadFactART {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-//                .option("truncate", "true")
+                .option("truncate", "true")
                 .option("dbtable", "dbo.FACTART")
                 .mode(SaveMode.Overwrite)
                 .save();
