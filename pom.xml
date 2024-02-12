@@ -53,6 +53,7 @@
         <module>Load Fact PREP Assessments</module>
         <module>Load Fact NCDs</module>
         <module>Load Fact HEI</module>
+        <module>Load Fact HTS Pos Concordance</module>
     </modules>
 
     <dependencyManagement>
