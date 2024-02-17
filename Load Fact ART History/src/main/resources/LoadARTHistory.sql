@@ -4,7 +4,8 @@ select
     agency.AgencyKey,
     patient.PatientKey,
     as_of.DateKey AS AsOfDateKey,
-    CASE WHEN txcurr_report.ARTOutcome = 'V' THEN 1 ELSE 0 END AS IsTXCurr,
+    CASE WHEN txcurr_report.ARTOutcome = 'V' THEN 1 ELSE 0 END as IsTXCurr,
+    txcurr_report.DifferentiatedCare,
     art_outcome.ARTOutcomeKey,
     current_date() as LoadDate
 from txcurr_report
