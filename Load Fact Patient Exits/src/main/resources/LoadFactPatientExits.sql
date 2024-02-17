@@ -4,7 +4,7 @@ Select
     partner.PartnerKey,
     agency.AgencyKey,
     dtDead.DateKey As dtDeadKey,
-    dtLTFU.DateKey As dtLTFUKey,
+    dtLTFU.DateKey As dtLFTUKey,
     dtTO.DateKey As dtTOKey,
     dtARTStop.DateKey As dtARTStopKey,
     current_date() as LoadDate
