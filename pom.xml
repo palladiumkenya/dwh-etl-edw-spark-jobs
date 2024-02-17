@@ -54,6 +54,7 @@
         <module>Load Fact NCDs</module>
         <module>Load Fact HEI</module>
         <module>Load Fact HTS Pos Concordance</module>
+        <module>Load Fact Appointments</module>
     </modules>
 
     <dependencyManagement>
