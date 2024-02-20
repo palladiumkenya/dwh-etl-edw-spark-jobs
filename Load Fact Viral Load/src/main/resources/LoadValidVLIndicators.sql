@@ -20,7 +20,7 @@ select
             case
                 when cast(replace(TestResult,',','') AS float) >= 1000.00 then '>1000'
                 when cast(replace(TestResult,',','') as float) between 200.00 and 999.00  then '200-999'
-                when cast(replace(TestResult,',','') as float) between 51.00 and 199.00 then '51-199'
+                when cast(replace(TestResult,',','') as float) between 50.00 and 199.00 then 'Low Risk LLV'
                 when cast(replace(TestResult,',','') as float) < 50 then '<50'
                 end
         else
@@ -33,7 +33,7 @@ select
             case
                 when cast(replace(TestResult,',','') AS float) >= 1000.00 then 'UNSUPPRESSED'
                 when cast(replace(TestResult,',','') as float) between 200.00 and 999.00  then 'High Risk LLV '
-                when cast(replace(TestResult,',','') as float) between 51.00 and 199.00 then 'Low Risk LLV'
+                when cast(replace(TestResult,',','') as float) between 50.00 and 199.00 then 'Low Risk LLV'
                 when cast(replace(TestResult,',','') as float) < 50 then 'LDL'
                 end
         else

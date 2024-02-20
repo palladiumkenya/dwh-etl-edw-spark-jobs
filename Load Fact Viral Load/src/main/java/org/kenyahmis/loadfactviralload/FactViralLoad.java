@@ -18,6 +18,7 @@ public class FactViralLoad {
 
         SparkConf conf = new SparkConf();
         conf.setAppName("Load Viral Load Fact");
+
         SparkSession session = SparkSession.builder()
                 .config(conf)
                 .getOrCreate();
@@ -65,29 +66,31 @@ public class FactViralLoad {
         validVLDataFrame.persist(StorageLevel.DISK_ONLY());
         validVLDataFrame.printSchema();
 
-        final String loadPBFQueryFileName = "LoadPBF.sql";
-        String loadPBFDataQuery = loadViralLoad.loadQuery(loadPBFQueryFileName);
+        final String loadPBFValidVLQueryFileName = "LoadPBFWValidVL.sql";
+        String loadPBFValidVLDataQuery = loadViralLoad.loadQuery(loadPBFValidVLQueryFileName);
 
-        Dataset<Row> PBFDataFrame = session.read()
+        Dataset<Row> PBFValidVLDataFrame = session.read()
                 .format("jdbc")
                 .option("url", rtConfig.get("spark.ods.url"))
                 .option("driver", rtConfig.get("spark.ods.driver"))
                 .option("user", rtConfig.get("spark.ods.user"))
                 .option("password", rtConfig.get("spark.ods.password"))
-                .option("query", loadPBFDataQuery)
+                .option("query", loadPBFValidVLDataQuery)
                 .load();
-        PBFDataFrame.createOrReplaceTempView("PBF");
-        PBFDataFrame.persist(StorageLevel.DISK_ONLY());
-        PBFDataFrame.printSchema();
+        PBFValidVLDataFrame.createOrReplaceTempView("PBFW_valid_vl");
+        PBFValidVLDataFrame.persist(StorageLevel.DISK_ONLY());
+        PBFValidVLDataFrame.printSchema();
+
+        final String loadPBFValidVLIndicatorsQueryFileName = "LoadPBFWValidVLIndicators.sql";
+        String loadPBFValidVLIndicatorsDataQuery = loadViralLoad.loadQuery(loadPBFValidVLIndicatorsQueryFileName);
+        session.sql(loadPBFValidVLIndicatorsDataQuery).createOrReplaceTempView("PBFW_valid_vl_indicators");
 
         final String loadValidVLIndicatorsQueryFileName = "LoadValidVLIndicators.sql";
         String loadValidVLIndicatorsDataQuery = loadViralLoad.loadQuery(loadValidVLIndicatorsQueryFileName);
-
         session.sql(loadValidVLIndicatorsDataQuery).createOrReplaceTempView("valid_VL_indicators");
 
         final String loadPatientViralLoadIntervalsQueryFileName = "LoadPatientViralLoadIntervals.sql";
         String loadPatientViralLoadIntervalsDataQuery = loadViralLoad.loadQuery(loadPatientViralLoadIntervalsQueryFileName);
-
         Dataset<Row> patientViralLoadIntervalsDataFrame = session.read()
                 .format("jdbc")
                 .option("url", rtConfig.get("spark.ods.url"))
@@ -194,6 +197,53 @@ public class FactViralLoad {
         latestVL3DataFrame.createOrReplaceTempView("latest_VL_3");
         latestVL3DataFrame.persist(StorageLevel.DISK_ONLY());
         latestVL3DataFrame.printSchema();
+
+        Dataset<Row> IntermediateOrderedViralLoadsDataFrame = session.read()
+                .format("jdbc")
+                .option("url", rtConfig.get("spark.ods.url"))
+                .option("driver", rtConfig.get("spark.ods.driver"))
+                .option("user", rtConfig.get("spark.ods.user"))
+                .option("password", rtConfig.get("spark.ods.password"))
+                .option("dbtable", "dbo.Intermediate_OrderedViralLoads")
+                .load();
+        IntermediateOrderedViralLoadsDataFrame.createOrReplaceTempView("Intermediate_OrderedViralLoads");
+        IntermediateOrderedViralLoadsDataFrame.persist(StorageLevel.DISK_ONLY());
+        IntermediateOrderedViralLoadsDataFrame.printSchema();
+
+        final String loadSecondLatestVLFileName = "LoadSecondLatestVL.sql";
+        String loadSecondLatestVLDataQuery = loadViralLoad.loadQuery(loadSecondLatestVLFileName);
+
+        session.sql(loadSecondLatestVLDataQuery).createOrReplaceTempView("SecondLatestVL");
+
+        final String loadRepeatVLFileName = "LoadRepeatVL.sql";
+        String loadRepeatVLDataQuery = loadViralLoad.loadQuery(loadRepeatVLFileName);
+
+        session.sql(loadRepeatVLDataQuery).createOrReplaceTempView("RepeatVL");
+
+        final String loadRepeatVLSuppFileName = "LoadRepeatVlSupp.sql";
+        String loadRepeatVLSuppDataQuery = loadViralLoad.loadQuery(loadRepeatVLSuppFileName);
+
+        session.sql(loadRepeatVLSuppDataQuery).createOrReplaceTempView("RepeatVlSupp");
+
+        final String loadRepeatVLUnSuppFileName = "LoadRepeatVlUnSupp.sql";
+        String loadRepeatVLUnSuppDataQuery = loadViralLoad.loadQuery(loadRepeatVLUnSuppFileName);
+
+        session.sql(loadRepeatVLUnSuppDataQuery).createOrReplaceTempView("RepeatVlUnSupp");
+
+        final String loadPbfwClientFileName = "LoadPbfwClients.sql";
+        String loadPbfwClientsDataQuery = loadViralLoad.loadQuery(loadPbfwClientFileName);
+
+        Dataset<Row> PbfwClientsDataFrame = session.read()
+                .format("jdbc")
+                .option("url", rtConfig.get("spark.ods.url"))
+                .option("driver", rtConfig.get("spark.ods.driver"))
+                .option("user", rtConfig.get("spark.ods.user"))
+                .option("password", rtConfig.get("spark.ods.password"))
+                .option("query", loadPbfwClientsDataQuery)
+                .load();
+        PbfwClientsDataFrame.createOrReplaceTempView("pbfw_clients");
+        PbfwClientsDataFrame.persist(StorageLevel.DISK_ONLY());
+        PbfwClientsDataFrame.printSchema();
 
         Dataset<Row> ctARTPatientDataFrame = session.read()
                 .format("jdbc")
