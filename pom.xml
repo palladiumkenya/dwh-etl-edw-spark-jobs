@@ -55,6 +55,7 @@
         <module>Load Fact HEI</module>
         <module>Load Fact HTS Pos Concordance</module>
         <module>Load Fact Appointments</module>
+        <module>Load Fact TxCurr Concordance</module>
     </modules>
 
     <dependencyManagement>
@@ -71,7 +72,7 @@
                 <groupId>org.apache.spark</groupId>
                 <artifactId>spark-sql_2.13</artifactId>
                 <version>${spark.version}</version>
-                <scope>provided</scope>
+<!--                <scope>provided</scope>-->
             </dependency>
 
             <!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
