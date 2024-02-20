@@ -17,3 +17,4 @@ from source_data
     left join DimDate as tracing on tracing.Date = source_data.TracingDate
     left join DimHTSTraceOutcome as outcome on outcome.TraceOutcome = source_data.TracingOutcome
     left join DimHTSTraceType as trace_type on trace_type.TraceType = source_data.TracingType
+WHERE patient.voided =0;

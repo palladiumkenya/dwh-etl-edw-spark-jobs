@@ -19,3 +19,4 @@ from source_data
     left join DimAgency as agency on agency.AgencyName = MFL_partner_agency_combination.Agency
     left join DimTestKitName as kit_name1 on kit_name1.TestKitName = source_data.TestKitName1
     left join DimTestKitName as kit_name2 on kit_name2.TestKitName = source_data.TestKitName2
+WHERE patient.voided =0;

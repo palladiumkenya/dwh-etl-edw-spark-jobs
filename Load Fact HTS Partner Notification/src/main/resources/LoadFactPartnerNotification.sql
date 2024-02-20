@@ -30,3 +30,4 @@ from source_data
     left join DimDate as DateElicited on DateElicited.Date = source_data.DateElicited
     left join DimDate as LinkDateLinkedToCare on LinkDateLinkedToCare.Date = source_data.LinkDateLinkedToCare
     left join DimAgeGroup as age_group on age_group.Age = source_data.AgeAtElicitation
+WHERE patient.voided =0;
