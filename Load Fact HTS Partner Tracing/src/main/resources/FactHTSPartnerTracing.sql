@@ -16,4 +16,5 @@ from source_data
     left join DimAgency as agency on agency.AgencyName = MFL_partner_agency_combination.Agency
     left join DimDate as booking on booking.Date = source_data.BookingDate
     left join DimHTSTraceOutcome as outcome on outcome.TraceOutcome = source_data.TraceOutcome
-    left join DimHTSTraceType as trace_type on trace_type.TraceType = source_data.TraceType;
+    left join DimHTSTraceType as trace_type on trace_type.TraceType = source_data.TraceType
+WHERE patient.voided = 0;
