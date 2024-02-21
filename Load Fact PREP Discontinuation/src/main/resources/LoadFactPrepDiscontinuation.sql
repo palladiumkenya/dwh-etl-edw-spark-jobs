@@ -19,3 +19,4 @@ left join agency on agency.AgencyName = MFL_partner_agency_combination.Agency
 left join facility on facility.MFLCode = prep_patients.SiteCode
 left join DimDate as Discontinuation on Discontinuation.Date = PrepDiscontinuation.ExitDate
 left join age_group on age_group.Age = round((months_between(PrepDiscontinuation.ExitDate,  patient.DOB)/12),0)
+WHERE patient.voided =0;

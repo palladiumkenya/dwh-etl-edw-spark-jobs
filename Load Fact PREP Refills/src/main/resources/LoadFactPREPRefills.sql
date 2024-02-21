@@ -28,3 +28,4 @@ left join DimDate as dispense_month_1 on dispense_month_1.Date = source_data.Dis
 left join DimDate as refill_month_3 on refill_month_3.Date = source_data.TestDateMonth3
 left join DimDate as dispense_month_3 on dispense_month_3.Date = source_data.DispenseDateMonth3
 left join DimDate as dispense_date on dispense_date.Date = source_data.DispenseDate
+WHERE patient.voided =0;
