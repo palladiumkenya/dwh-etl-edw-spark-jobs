@@ -66,4 +66,5 @@ SELECT
     left join DimAgeGroup as age_group on age_group.Age = round((months_between(coalesce(PrepVisits.VisitDate, current_date()),  patient.DOB)/12),0)
     left join DimDate as visit on visit.Date = PrepVisits.VisitDate
     left join DimDate as pregnancy on pregnancy.Date = PrepVisits.PregnancyEndDate
-    left join DimDate as appointment on appointment.Date= PrepVisits.NextAppointment;
+    left join DimDate as appointment on appointment.Date= PrepVisits.NextAppointment
+WHERE patient.voided =0;

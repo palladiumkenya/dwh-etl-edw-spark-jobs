@@ -74,3 +74,4 @@ from source_data
     left join DimDate as VisitDate on VisitDate.Date = source_data.VisitDate
     left join DimDate as DateTestedSelf on DateTestedSelf.Date = source_data.DateTestedSelf
     left join DimDate as DateTestedProvider on DateTestedProvider.Date = source_data.DateTestedProvider
+WHERE patient.voided =0;

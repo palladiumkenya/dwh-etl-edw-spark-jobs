@@ -51,4 +51,5 @@ left join DimAgeGroup as age_group on age_group.Age = round((months_between(hts_
 left join DimDate as testing on testing.Date = cast(hts_encounter.TestDate as date)
 left join client_linkage_data on client_linkage_data.PatientPk = hts_encounter.PatientPK
     and client_linkage_data.SiteCode = hts_encounter.SiteCode
-    and client_linkage_data.row_num = 1;
+    and client_linkage_data.row_num = 1
+WHERE patient.voided =0;

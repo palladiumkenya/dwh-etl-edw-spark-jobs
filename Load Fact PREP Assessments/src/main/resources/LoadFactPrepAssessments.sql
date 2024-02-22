@@ -36,3 +36,4 @@ from source_data
     left join facility on facility.MFLCode = source_data.SiteCode
     left join age_group on age_group.Age = round((months_between(coalesce(source_data.AssessmentVisitDate, current_date()),  patient.DOB)/12),0)
     left join DimDate as assessment_date on assessment_date.Date = source_data.AssessmentVisitDate
+WHERE patient.voided =0;
