@@ -20,3 +20,4 @@ FROM
         LEFT JOIN DimPartner AS partner ON partner.PartnerName = MFL_partner_agency_combination.SDP
         LEFT JOIN DimAgency AS agency ON agency.AgencyName = MFL_partner_agency_combination.Agency
         LEFT JOIN DimAgeGroup AS age_group ON age_group.Age = combined_ipt_data.AgeLastVisit
+WHERE patient.voided =0;

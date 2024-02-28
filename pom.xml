@@ -51,6 +51,12 @@
         <module>Load Fact PREP Discontinuation</module>
         <module>Load Fact PREP Refills</module>
         <module>Load Fact PREP Assessments</module>
+        <module>Load Fact NCDs</module>
+        <module>Load Fact HEI</module>
+        <module>Load Fact HTS Pos Concordance</module>
+        <module>Load Fact Appointments</module>
+        <module>Load Fact TxCurr Concordance</module>
+        <module>Load Fact Ushauri Appointments</module>
     </modules>
 
     <dependencyManagement>

@@ -19,8 +19,15 @@ select
       combined_viral_load_dataset.LatestVL3,
       combined_viral_load_dataset.EligibleVL,
       combined_viral_load_dataset.ValidVLResult,
-      combined_viral_load_dataset.HasValidVL,
-      combined_viral_load_dataset.PBFValidVL,
+      Case
+          when combined_viral_load_dataset.HasValidVL = 1 and IsPBFW = 1 and PBFW_ValidVL = 0 then 0
+          else combined_viral_load_dataset.HasValidVL
+          end as HasValidVL,
+      combined_viral_load_dataset.IsPBFW,
+      combined_viral_load_dataset.PBFW_ValidVL,
+      combined_viral_load_dataset.PBFW_ValidVLResultCategory,
+      combined_viral_load_dataset.PBFW_ValidVLSup,
+      pbfw_validVL_date.DateKey as PBFW_ValidDateKey,
       combined_viral_load_dataset.ValidVLResultCategory1,
       combined_viral_load_dataset.ValidVLResultCategory2,
       combined_viral_load_dataset.ValidVLSup,
@@ -37,7 +44,10 @@ select
       combined_viral_load_dataset.TimetoFirstVL,
       combined_viral_load_dataset.TimeToFirstVLGrp,
       combined_viral_load_dataset.HighViremia,
-      combined_viral_load_dataset.LowViremia
+      combined_viral_load_dataset.LowViremia,
+      combined_viral_load_dataset.RepeatVls,
+      combined_viral_load_dataset.RepeatSuppressed,
+      combined_viral_load_dataset.RepeatUnSuppressed
 from combined_viral_load_dataset
     left join DimPatient as patient on patient.PatientPKHash = combined_viral_load_dataset.PatientPKHash and patient.SiteCode = combined_viral_load_dataset.SiteCode
     left join DimFacility as facility on facility.MFLCode = combined_viral_load_dataset.SiteCode
@@ -55,3 +65,5 @@ from combined_viral_load_dataset
     left join DimDate as lastest_VL_date1 on lastest_VL_date1.Date = combined_viral_load_dataset.LatestVLDate1
     left join DimDate as lastest_VL_date2 on lastest_VL_date2.Date = combined_viral_load_dataset.LatestVLDate2
     left join DimDate as lastest_VL_date3 on lastest_VL_date3.Date = combined_viral_load_dataset.LatestVLDate3
+    left join DimDate as pbfw_validVL_date on pbfw_validVL_date.Date = combined_viral_load_dataset.PBFW_ValidVLDate
+WHERE patient.voided =0;

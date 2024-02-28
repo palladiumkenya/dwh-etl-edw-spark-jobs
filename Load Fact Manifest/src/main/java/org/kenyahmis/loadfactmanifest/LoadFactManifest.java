@@ -24,6 +24,22 @@ public class LoadFactManifest {
 
         RuntimeConfig rtConfig = session.conf();
 
+        LoadFactManifest loadFactManifest = new LoadFactManifest();
+        String manifestSourceQuery = loadFactManifest.loadQuery("FactManifest.sql");
+
+        Dataset<Row> manifestSourceDataFrame = session.read()
+                .format("jdbc")
+                .option("url", rtConfig.get("spark.ods.url"))
+                .option("driver", rtConfig.get("spark.ods.driver"))
+                .option("user", rtConfig.get("spark.ods.user"))
+                .option("password", rtConfig.get("spark.ods.password"))
+                .option("query", manifestSourceQuery)
+                .load();
+        manifestSourceDataFrame.createOrReplaceTempView("Fact_manifest");
+        manifestSourceDataFrame.persist(StorageLevel.DISK_ONLY());
+        manifestSourceDataFrame.printSchema();
+        manifestSourceDataFrame.show();
+
         Dataset<Row> dimDateDataFrame = session.read()
                 .format("jdbc")
                 .option("url", rtConfig.get("spark.edw.url"))
@@ -55,7 +71,7 @@ public class LoadFactManifest {
                 .option("dbtable", "dbo.DimPartner")
                 .load();
         dimPartnerDataFrame.persist(StorageLevel.DISK_ONLY());
-        dimPartnerDataFrame.createOrReplaceTempView("partner");
+        dimPartnerDataFrame.createOrReplaceTempView("DimPartner");
 
         Dataset<Row> dimAgencyDataFrame = session.read()
                 .format("jdbc")
@@ -74,36 +90,13 @@ public class LoadFactManifest {
                 .option("driver", rtConfig.get("spark.ods.driver"))
                 .option("user", rtConfig.get("spark.ods.user"))
                 .option("password", rtConfig.get("spark.ods.password"))
-                .option("query", "select MFL_Code,SDP,[SDP_Agency] as Agency from dbo.All_EMRSites")
+                .option("query", "select distinct MFL_Code, SDP, SDP_Agency as Agency from dbo.All_EMRSites")
                 .load();
         dimMFLPartnerAgencyCombinationDataFrame.persist(StorageLevel.DISK_ONLY());
         dimMFLPartnerAgencyCombinationDataFrame.createOrReplaceTempView("mfl_partner_agency_combination");
 
-        Dataset<Row> uploadsDataFrame = session.read()
-                .format("jdbc")
-                .option("url", rtConfig.get("spark.ods.url"))
-                .option("driver", rtConfig.get("spark.ods.driver"))
-                .option("user", rtConfig.get("spark.ods.user"))
-                .option("password", rtConfig.get("spark.ods.password"))
-                .option("query", "select cast(DateRecieved as date) as Dateuploaded, cast([Start] as date) as [Start], cast([End] as date) as [End], SiteCode from dbo.CT_FacilityManifest")
-                .load();
-        uploadsDataFrame.persist(StorageLevel.DISK_ONLY());
-        uploadsDataFrame.createOrReplaceTempView("Uploads");
-
-        final String queryFileName = "LoadFactManifest.sql";
-        String query;
-        InputStream inputStream = LoadFactManifest.class.getClassLoader().getResourceAsStream(queryFileName);
-        if (inputStream == null) {
-            logger.error(queryFileName + " not found");
-            return;
-        }
-        try {
-            query = IOUtils.toString(inputStream, Charset.defaultCharset());
-        } catch (IOException e) {
-            logger.error("Failed to load query from file", e);
-            return;
-        }
-        Dataset<Row> manifestDf = session.sql(query);
+        String manifestQuery = loadFactManifest.loadQuery("LoadFactManifest.sql");
+        Dataset<Row> manifestDf = session.sql(manifestQuery);
 //        manifestDf = manifestDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
         manifestDf.printSchema();
         int numberOfPartitionsBeforeRepartition = manifestDf.rdd().getNumPartitions();
@@ -117,9 +110,25 @@ public class LoadFactManifest {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", "dbo.FactManifiest")
+                .option("dbtable", "dbo.Fact_manifest")
                 .option("truncate", "true")
                 .mode(SaveMode.Overwrite)
                 .save();
+    }
+
+    private String loadQuery(String fileName) {
+        String query;
+        InputStream inputStream = LoadFactManifest.class.getClassLoader().getResourceAsStream(fileName);
+        if (inputStream == null) {
+            logger.error(fileName + " not found");
+            return null;
+        }
+        try {
+            query = IOUtils.toString(inputStream, Charset.defaultCharset());
+        } catch (IOException e) {
+            logger.error("Failed to load query from file", e);
+            return null;
+        }
+        return query;
     }
 }

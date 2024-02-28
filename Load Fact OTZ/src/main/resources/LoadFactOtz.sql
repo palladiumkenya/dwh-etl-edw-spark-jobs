@@ -28,3 +28,4 @@ from otz_and_last_encounter_combined
     left join DimPartner as partner on partner.PartnerName = upper(MFL_partner_agency_combination.SDP)
     left join DimAgency as agency on agency.AgencyName = MFL_partner_agency_combination.Agency
     left join DimAgeGroup as age_group on age_group.Age = otz_and_last_encounter_combined.AgeLastVisit
+WHERE patient.voided =0;

@@ -4,7 +4,8 @@ select
     agency.AgencyKey,
     patient.PatientKey,
     as_of.DateKey AS AsOfDateKey,
-    CASE WHEN txcurr_report.ARTOutcome = 'V' THEN 1 ELSE 0 END AS IsTXCurr,
+    CASE WHEN txcurr_report.ARTOutcome = 'V' THEN 1 ELSE 0 END as IsTXCurr,
+    txcurr_report.DifferentiatedCare,
     art_outcome.ARTOutcomeKey,
     current_date() as LoadDate
 from txcurr_report
@@ -15,3 +16,4 @@ left join mfl_partner_agency_combination on mfl_partner_agency_combination.MFL_C
 left join partner on partner.PartnerName = mfl_partner_agency_combination.SDP
 left join agency on agency.AgencyName = mfl_partner_agency_combination.Agency
 left join art_outcome on art_outcome.ARTOutcome = txcurr_report.ARTOutcome
+WHERE patient.voided =0;

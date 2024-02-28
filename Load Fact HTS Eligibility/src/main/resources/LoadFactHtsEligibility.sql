@@ -59,6 +59,10 @@ select
     source_data.HIVRiskCategory,
     source_data.HtsRiskScore,
     source_data.ReasonRefferredForTesting,
+    source_data.ReasonNotReffered,
+    source_data.HTSStrategy,
+    source_data.CurrentlyOnPrep,
+    source_data.HTSEntryPoint,
     current_date() as LoadDate
 from source_data
     left join DimPatient as patient on patient.PatientPKHash = source_data.PatientPKHash

@@ -4,7 +4,7 @@ Select
     partner.PartnerKey,
     agency.AgencyKey,
     dtDead.DateKey As dtDeadKey,
-    dtLTFU.DateKey As dtLTFUKey,
+    dtLTFU.DateKey As dtLFTUKey,
     dtTO.DateKey As dtTOKey,
     dtARTStop.DateKey As dtARTStopKey,
     current_date() as LoadDate
@@ -17,4 +17,5 @@ from Exits
     left join DimDate as dtARTStop on dtARTStop.Date= dtARTStop
     left join DimDate as dtLTFU on dtLTFU.Date= dtLTFU
     left join DimDate as dtTO on dtTO.Date= dtTO
-    left join DimDate as dtDead on dtDead.Date= dtDead;
+    left join DimDate as dtDead on dtDead.Date= dtDead
+WHERE patient.voided =0;
