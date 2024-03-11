@@ -8,6 +8,7 @@ import org.apache.spark.storage.StorageLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.spark.sql.functions.monotonically_increasing_id;
 import static org.apache.spark.sql.functions.row_number;
 
 public class LoadDimTreatmentType {
@@ -33,7 +34,7 @@ public class LoadDimTreatmentType {
                         "distinct TreatmentType as TreatmentType,\n" +
                         "case when TreatmentType in ('ARV','HIV Treatment') Then 'ART'\n" +
                         "when TreatmentType='Hepatitis B' Then 'Non-ART'\n" +
-                        "Else TreatmentType End As TreatmentType_Cleaned\n" +
+                        "Else TreatmentType End As TreatmentTypeCategory\n" +
                         "from dbo.CT_PatientPharmacy\n" +
                         "where TreatmentType <> 'NULL' and TreatmentType <>''")
                 .load();
@@ -44,6 +45,7 @@ public class LoadDimTreatmentType {
         // load dim treatment types
         Dataset<Row> dimTreatmentTypes = session.sql("select source_TreatmentType.*, current_date() as LoadDate " +
                 "from source_TreatmentType");
+        dimTreatmentTypes = dimTreatmentTypes.withColumn("TreatmentTypeKey", monotonically_increasing_id().plus(1));
 
         dimTreatmentTypes
                 .write()

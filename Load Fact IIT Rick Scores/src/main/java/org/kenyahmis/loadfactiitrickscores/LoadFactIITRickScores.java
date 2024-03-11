@@ -1,4 +1,4 @@
-package org.kenyahmis.loadarthistoryfact;
+package org.kenyahmis.loadfactiitrickscores;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.spark.SparkConf;
@@ -9,19 +9,70 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import static org.apache.spark.sql.functions.monotonically_increasing_id;
 
-public class LoadARTHistoryFact {
-    private static final Logger logger = LoggerFactory.getLogger(LoadARTHistoryFact.class);
+
+public class LoadFactIITRickScores {
+    private static final Logger logger = LoggerFactory.getLogger(LoadFactIITRickScores.class);
+
     public static void main(String[] args) {
         SparkConf conf = new SparkConf();
-        conf.setAppName("Load ART History Fact");
+        conf.setAppName("Load IIT Rick Scores Fact");
+
 
         SparkSession session = SparkSession.builder()
                 .config(conf)
                 .getOrCreate();
 
         RuntimeConfig rtConfig = session.conf();
+
+        LoadFactIITRickScores loadFactIITRickScores = new LoadFactIITRickScores();
+
+        // iit_risk_scores_ordering
+        String loadIITRiskOrderingQuery = loadFactIITRickScores.loadQuery("iit_risk_scores_ordering.sql");
+
+        Dataset<Row> iitRiskOrderingDataFrame = session.read()
+                .format("jdbc")
+                .option("url", rtConfig.get("spark.ods.url"))
+                .option("driver", rtConfig.get("spark.ods.driver"))
+                .option("user", rtConfig.get("spark.ods.user"))
+                .option("password", rtConfig.get("spark.ods.password"))
+                .option("query", loadIITRiskOrderingQuery)
+                .load();
+        iitRiskOrderingDataFrame.createOrReplaceTempView("iit_risk_scores_ordering");
+        iitRiskOrderingDataFrame.persist(StorageLevel.DISK_ONLY());
+        iitRiskOrderingDataFrame.printSchema();
+
+        // appointments_from_last_visit
+        String loadAppLastVisitQuery = loadFactIITRickScores.loadQuery("appointments_from_last_visit.sql");
+
+        Dataset<Row> appLastVisitDataFrame = session.read()
+                .format("jdbc")
+                .option("url", rtConfig.get("spark.ods.url"))
+                .option("driver", rtConfig.get("spark.ods.driver"))
+                .option("user", rtConfig.get("spark.ods.user"))
+                .option("password", rtConfig.get("spark.ods.password"))
+                .option("query", loadAppLastVisitQuery)
+                .load();
+        appLastVisitDataFrame.createOrReplaceTempView("appointments_from_last_visit");
+        appLastVisitDataFrame.persist(StorageLevel.DISK_ONLY());
+        appLastVisitDataFrame.printSchema();
+
+        // active_clients
+        String loadActiveClientsQuery = loadFactIITRickScores.loadQuery("active_clients.sql");
+
+        Dataset<Row> activeClientsDataFrame = session.read()
+                .format("jdbc")
+                .option("url", rtConfig.get("spark.ods.url"))
+                .option("driver", rtConfig.get("spark.ods.driver"))
+                .option("user", rtConfig.get("spark.ods.user"))
+                .option("password", rtConfig.get("spark.ods.password"))
+                .option("query", loadActiveClientsQuery)
+                .load();
+        activeClientsDataFrame.createOrReplaceTempView("active_clients");
+        activeClientsDataFrame.persist(StorageLevel.DISK_ONLY());
+        activeClientsDataFrame.printSchema();
+
+
         Dataset<Row> dimDateDataFrame = session.read()
                 .format("jdbc")
                 .option("url", rtConfig.get("spark.edw.url"))
@@ -31,7 +82,7 @@ public class LoadARTHistoryFact {
                 .option("dbtable", "dbo.DimDate")
                 .load();
         dimDateDataFrame.persist(StorageLevel.DISK_ONLY());
-        dimDateDataFrame.createOrReplaceTempView("as_of");
+        dimDateDataFrame.createOrReplaceTempView("DimDate");
 
         Dataset<Row> dimFacilityDataFrame = session.read()
                 .format("jdbc")
@@ -77,27 +128,16 @@ public class LoadARTHistoryFact {
         dimAgencyDataFrame.persist(StorageLevel.DISK_ONLY());
         dimAgencyDataFrame.createOrReplaceTempView("agency");
 
-        Dataset<Row> dimARTOutcomeDataFrame = session.read()
+        Dataset<Row> dimAgeGroupDataFrame = session.read()
                 .format("jdbc")
                 .option("url", rtConfig.get("spark.edw.url"))
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", "dbo.DimARTOutcome")
+                .option("dbtable", "dbo.DimAgeGroup")
                 .load();
-        dimARTOutcomeDataFrame.persist(StorageLevel.DISK_ONLY());
-        dimARTOutcomeDataFrame.createOrReplaceTempView("art_outcome");
-
-        Dataset<Row> dimHistoricalARTOutcomeBaseDataFrame = session.read()
-                .format("jdbc")
-                .option("url", rtConfig.get("spark.Historical.url"))
-                .option("driver", rtConfig.get("spark.Historical.driver"))
-                .option("user", rtConfig.get("spark.Historical.user"))
-                .option("password", rtConfig.get("spark.Historical.password"))
-                .option("dbtable", "dbo.HistoricalARTOutcomesBaseTable")
-                .load();
-        dimHistoricalARTOutcomeBaseDataFrame.persist(StorageLevel.DISK_ONLY());
-        dimHistoricalARTOutcomeBaseDataFrame.createOrReplaceTempView("txcurr_report");
+        dimAgeGroupDataFrame.persist(StorageLevel.DISK_ONLY());
+        dimAgeGroupDataFrame.createOrReplaceTempView("agegroup");
 
         Dataset<Row> dimMFLPartnerAgencyCombinationDataFrame = session.read()
                 .format("jdbc")
@@ -110,26 +150,14 @@ public class LoadARTHistoryFact {
         dimMFLPartnerAgencyCombinationDataFrame.persist(StorageLevel.DISK_ONLY());
         dimMFLPartnerAgencyCombinationDataFrame.createOrReplaceTempView("mfl_partner_agency_combination");
 
-        final String queryFileName = "LoadARTHistory.sql";
-        String query;
-        InputStream inputStream = LoadARTHistoryFact.class.getClassLoader().getResourceAsStream(queryFileName);
-        if (inputStream == null) {
-            logger.error(queryFileName + " not found");
-            return;
-        }
-        try {
-            query = IOUtils.toString(inputStream, Charset.defaultCharset());
-        } catch (IOException e) {
-            logger.error("Failed to load query from file", e);
-            return;
-        }
-        Dataset<Row> artHistoryDf = session.sql(query);
-//        artHistoryDf = artHistoryDf.withColumn("FactKey", monotonically_increasing_id().plus(1));
-        artHistoryDf.printSchema();
-        int numberOfPartitionsBeforeRepartition = artHistoryDf.rdd().getNumPartitions();
-        logger.info("Number of partitions before repartition: "+ numberOfPartitionsBeforeRepartition);
-        final int writePartitions = 100;
-        artHistoryDf
+
+        String loadFactIITRiskScoresQuery = loadFactIITRickScores.loadQuery("LoadFactIITRiskScores.sql");
+        Dataset<Row> factIITRiskScoresDf = session.sql(loadFactIITRiskScoresQuery);
+        factIITRiskScoresDf.printSchema();
+        long factIITRiskCount = factIITRiskScoresDf.count();
+        logger.info("Fact IIT Risk Scores Count is: " + factIITRiskCount);
+        final int writePartitions = 50;
+        factIITRiskScoresDf
                 .repartition(writePartitions)
                 .write()
                 .format("jdbc")
@@ -137,9 +165,25 @@ public class LoadARTHistoryFact {
                 .option("driver", rtConfig.get("spark.edw.driver"))
                 .option("user", rtConfig.get("spark.edw.user"))
                 .option("password", rtConfig.get("spark.edw.password"))
-                .option("dbtable", "dbo.FactARTHistory")
                 .option("truncate", "true")
+                .option("dbtable", "dbo.FactIITRiskScores")
                 .mode(SaveMode.Overwrite)
                 .save();
+    }
+
+    private String loadQuery(String fileName) {
+        String query;
+        InputStream inputStream = LoadFactIITRickScores.class.getClassLoader().getResourceAsStream(fileName);
+        if (inputStream == null) {
+            logger.error(fileName + " not found");
+            return null;
+        }
+        try {
+            query = IOUtils.toString(inputStream, Charset.defaultCharset());
+        } catch (IOException e) {
+            logger.error("Failed to load query from file", e);
+            return null;
+        }
+        return query;
     }
 }

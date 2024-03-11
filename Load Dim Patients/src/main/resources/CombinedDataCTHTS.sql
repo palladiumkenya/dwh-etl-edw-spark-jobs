@@ -15,6 +15,6 @@ select
     ct_patient_source.IsTXCurr,
     hts_patient_source.HTSNumberHash,
     current_date() as LoadDate,
-    coalesce(ct_patient_source.voided,hts_patient_source.voided) As voided
+    coalesce(int(ct_patient_source.voided),int(hts_patient_source.voided)) As voided
 from ct_patient_source
 full join hts_patient_source on  hts_patient_source.PatientPKHash = ct_patient_source.PatientPKHash and ct_patient_source.SiteCode = hts_patient_source.SiteCode

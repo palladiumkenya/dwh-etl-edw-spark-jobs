@@ -19,6 +19,6 @@ SELECT
     pmtct_patient_source.patientmnchidhash,
     pmtct_patient_source.firstenrollmentatmnchdatekey,
     current_date() AS LoadDate,
-    COALESCE(combined_data_ct_hts_prep.voided,pmtct_patient_source.voided) As Voided
+    COALESCE(int(combined_data_ct_hts_prep.voided),int(pmtct_patient_source.voided)) As Voided
 FROM combined_data_ct_hts_prep
 FULL JOIN pmtct_patient_source ON combined_data_ct_hts_prep.patientpkhash = pmtct_patient_source.patientpkhash AND combined_data_ct_hts_prep.sitecode = pmtct_patient_source.sitecode

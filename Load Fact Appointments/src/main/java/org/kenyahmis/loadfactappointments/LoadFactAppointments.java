@@ -101,10 +101,10 @@ public class LoadFactAppointments {
 
         Dataset<Row> historicalAptDataFrame = session.read()
                 .format("jdbc")
-                .option("url", rtConfig.get("spark.ods.url"))
-                .option("driver", rtConfig.get("spark.ods.driver"))
-                .option("user", rtConfig.get("spark.ods.user"))
-                .option("password", rtConfig.get("spark.ods.password"))
+                .option("url", rtConfig.get("spark.Historical.url"))
+                .option("driver", rtConfig.get("spark.Historical.driver"))
+                .option("user", rtConfig.get("spark.Historical.user"))
+                .option("password", rtConfig.get("spark.Historical.password"))
                 .option("dbtable", "dbo.HistoricalAppointmentStatus")
                 .load();
         historicalAptDataFrame.persist(StorageLevel.DISK_ONLY());

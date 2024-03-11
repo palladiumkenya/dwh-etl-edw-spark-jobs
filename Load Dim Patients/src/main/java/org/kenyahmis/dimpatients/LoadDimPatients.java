@@ -5,6 +5,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.sql.*;
 import org.apache.spark.sql.expressions.Window;
 import org.apache.spark.sql.expressions.WindowSpec;
+import static org.apache.spark.sql.functions.monotonically_increasing_id;
 import org.apache.spark.storage.StorageLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+
 import static org.apache.spark.sql.functions.row_number;
 
 public class LoadDimPatients {
@@ -105,6 +107,21 @@ public class LoadDimPatients {
         combinedCtHtsPrepDf.persist(StorageLevel.DISK_ONLY());
         combinedCtHtsPrepDf.createOrReplaceTempView("combined_data_ct_hts_prep");
 
+        // ushauri patient source nonEMR
+//        final String loadUshauriPatientSourceNonEMRQueryFileName = "UshauriPatientSourceNonEMR.sql";
+//        String loadUshauriPatientSourceNonEMRQuery = loadDimPatients.loadQuery(loadUshauriPatientSourceNonEMRQueryFileName);
+//        Dataset<Row> ushauriPatientSourceNonEMRDf = session.read()
+//                .format("jdbc")
+//                .option("url", rtConfig.get("spark.ods.url"))
+//                .option("driver", rtConfig.get("spark.ods.driver"))
+//                .option("user", rtConfig.get("spark.ods.user"))
+//                .option("password", rtConfig.get("spark.ods.password"))
+//                .option("query", loadUshauriPatientSourceNonEMRQuery)
+//                .load();
+//        ushauriPatientSourceNonEMRDf.persist(StorageLevel.DISK_ONLY());
+//        ushauriPatientSourceNonEMRDf.createOrReplaceTempView("ushauri_patient_source_nonEMR");
+//        ushauriPatientSourceNonEMRDf.printSchema();
+
         // combined data ct hts prep PMTCT
         final String loadCombinedCtHtsPrepPMTCTDataQueryFileName = "CombinedDataCTHTSPrepPMTCT.sql";
         String loadCombinedCtHtsPrepPMTCTQuery = loadDimPatients.loadQuery(loadCombinedCtHtsPrepPMTCTDataQueryFileName);
@@ -115,6 +132,7 @@ public class LoadDimPatients {
         // load dim patients
         String loadDimPatientsQuery = loadDimPatients.loadQuery("LoadDimPatients.sql");
         Dataset<Row> dimPatients = session.sql(loadDimPatientsQuery);
+        dimPatients = dimPatients.withColumn("PatientKey", monotonically_increasing_id().plus(1));
 
         logger.info("Writing final Dimpatient DF");
         dimPatients.printSchema();

@@ -13,6 +13,7 @@ Select
     Percent_variance_KHIS_DWH as Proportion_variance_KHIS_DWH,
     Percent_variance_KHIS_EMR as Proportion_variance_KHIS_EMR,
     date_sub(date_trunc('MONTH', current_date()), 1) as Reporting_Month,
+    DwapiVersion,
     Cast(current_date() as date) as LoadDate
 from Summary
 left join DimFacility as facility on facility.MFLCode = Summary.MFLCode
