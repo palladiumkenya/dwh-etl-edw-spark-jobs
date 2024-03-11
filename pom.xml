@@ -57,6 +57,8 @@
         <module>Load Fact Appointments</module>
         <module>Load Fact TxCurr Concordance</module>
         <module>Load Fact Ushauri Appointments</module>
+        <module>Load Fact IIT Rick Scores</module>
+        <module>Load Fact PBFW</module>
     </modules>
 
     <dependencyManagement>
