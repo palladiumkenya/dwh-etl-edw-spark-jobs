@@ -19,21 +19,12 @@ public class LoadFactNCDs {
 
         SparkConf conf = new SparkConf();
         conf.setAppName("Load NCDs Fact");
-        conf.setMaster("local");
 
         SparkSession session = SparkSession.builder()
                 .config(conf)
                 .getOrCreate();
 
         RuntimeConfig rtConfig = session.conf();
-        rtConfig.set("spark.ods.url", "jdbc:sqlserver://10.230.50.66;encrypt=false;databaseName=ODS");
-        rtConfig.set("spark.ods.driver", "com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        rtConfig.set("spark.ods.user", "dwh");
-        rtConfig.set("spark.ods.password", "c0nstella");
-        rtConfig.set("spark.edw.url", "jdbc:sqlserver://10.230.50.66;encrypt=false;databaseName=NDWH");
-        rtConfig.set("spark.edw.driver", "com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        rtConfig.set("spark.edw.user", "dwh");
-        rtConfig.set("spark.edw.password", "c0nstella");
 
         LoadFactNCDs loadFactNCDs = new LoadFactNCDs();
         String ncdSourceQuery = loadFactNCDs.loadQuery("NCDSource.sql");
